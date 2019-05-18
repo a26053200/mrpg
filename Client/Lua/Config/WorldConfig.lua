@@ -27,20 +27,34 @@ WorldConfig.GuideScene = {
     debugName = "新手引导场景",
     level = "GuideNewbie",
     sceneName = "GuideNewbie",
-    levelUrl = "BundleScenes/GuideNewbie.unity",
+    levelUrl = "Scenes/GuideNewbie.unity",
     needLoading = true
 }
 WorldConfig.Lobby = {
     debugName = "游戏大厅",
     level = "Lobby",
     sceneName = "Lobby",
-    levelUrl = "BundleScenes/Lobby.unity",
+    levelUrl = "Scenes/Lobby.unity",
     needLoading = false
 }
 WorldConfig.Room_HJ = {
     debugName = "红尖",
     level = "Room_HJ",
     sceneName = "Room_HJ",
-    levelUrl = "BundleScenes/Room_HJ.unity",
+    levelUrl = "Scenes/Room_HJ.unity",
+    needLoading = true
+}
+WorldConfig.Battle = {
+    debugName = "Battle",
+    level = "Battle",
+    sceneName = "Battle",
+    levelUrl = "Scenes/Battle.unity",
+    subLevels = {
+      [1] =
+      {
+          level = "TopDown",
+          levelUrl = "Scenes/TopDown.unity",
+      },
+    },
     needLoading = true
 }

@@ -25,13 +25,14 @@ function LuaClient.RequireGlobalDefines()
     require "Game.Core.init"
     require "Game.Config.init"
     require "Game.Manager.init"
+    require "Game.Core.Launch"
 end
 
 
 --开始游戏
 function LuaClient.GameStart()
     print("GameStart...")
-    vmgr:LoadView(ViewConfig.World)
+    require "Game.Core.Launch"
     --local timer = Timer.New(LuaClient.DoTestCo, 2, 1)
     --timer:Start()
 end

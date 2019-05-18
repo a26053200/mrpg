@@ -13,6 +13,7 @@ end
 
 function ServiceContext:Launch()
     --TODO
+	self.binder:Bind(require("Game.Modules.Battle.Service.BattleService")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.HongJian.Service.HongJianService")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.Lobby.Service.LobbyService")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.Login.Service.LoginService")):ToSingleton()
@@ -20,6 +21,7 @@ function ServiceContext:Launch()
 	self.binder:Bind(require("Game.Modules.Robot.Service.RobotService")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.Role.Service.RoleService")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.Room.Service.RoomService")):ToSingleton()
+	self.binder:Bind(require("Game.Modules.World.Service.WorldService")):ToSingleton()
     --TODO
 end
 

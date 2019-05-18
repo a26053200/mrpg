@@ -20,11 +20,17 @@ ServerName.AccountServer = "AccountServer"
 ServerName.GateServer = "GateServer"
 ServerName.GameServer = "GameServer"
 
+---===============
+--- 常量
+---===============
 --目标帧率
 FrameRate = Application.targetFrameRate
 --目标帧间隔时间
 FrameTime = 1 / FrameRate
 
+---===============
+--- 枚举
+---===============
 GameName =
 {
     Hong_Jian = "Hong_Jian"

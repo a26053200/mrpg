@@ -5,15 +5,23 @@
 --- 场景的基类
 ---
 
-
+local SubScene = require('Game.Modules.World.Scenes.SubScene')
 local LuaMonoBehaviour = require('Betel.LuaMonoBehaviour')
+
 ---@class Game.Modules.World.Scenes.BaseScene : Betel.LuaMonoBehaviour
+---@field New fun(sceneInfo:SceneInfo, unityScene:UnityEngine.SceneManagement.Scene)
 ---@field unityScene UnityEngine.SceneManagement.Scene
----@field uiCanvas UnityEngine.GameObject
+---@field sceneInfo SceneInfo
+---@field currSubSceneInfo SubSceneInfo
+---@field currSubScene Game.Modules.World.Scenes.SubScene
 local BaseScene = class("BaseScene",LuaMonoBehaviour)
 
-function BaseScene:Ctor()
+---@param sceneInfo SceneInfo
+---@param unityScene UnityEngine.SceneManagement.Scene
+function BaseScene:Ctor(sceneInfo, unityScene)
     LuaMonoBehaviour.Ctor(self)
+    self.sceneInfo = sceneInfo
+    self.unityScene = unityScene
     self:Init()
 end
 
@@ -28,4 +36,24 @@ end
 function BaseScene:OnExitScene()
 
 end
+
+function BaseScene:LoadSubLevel(subLevelIndex, callback)
+    if self.sceneInfo.subLevels == nil or #self.sceneInfo.subLevels == 0 then
+        logError("There is no sub levels in this scene: "..self.sceneInfo.sceneName)
+    else
+        local subSceneInfo = self.sceneInfo.subLevels[subLevelIndex]
+        sceneMgr:LoadSubSceneAsync(subSceneInfo.level, function (unityScene)
+            local subScene = SubScene.New(subSceneInfo, unityScene)
+            log("加载子场景完成:"..subSceneInfo.level)
+            self.currSubSceneInfo = scene
+            self.currSubScene = subScene
+            subScene:Init()
+            if callback ~= nil then
+                callback()
+            end
+        end)
+    end
+
+end
+
 return BaseScene

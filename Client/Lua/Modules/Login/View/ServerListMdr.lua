@@ -54,9 +54,10 @@ function ServerListMdr:onLoginLobbyServerSuccess(data)
     if data.roleInfo == nil then
         vmgr:LoadView(ViewConfig.RoleCreate)--创建角色
     else
-        World.EnterScene(WorldConfig.Lobby)
+        --World.EnterScene(WorldConfig.Lobby)
         --World.EnterScene(WorldConfig.GuideScene)
         --vmgr:LoadView(ViewConfig.RoleSelect)--选择角色进入游戏
+        World.EnterScene(WorldConfig.Battle)
     end
 end
 

@@ -21,3 +21,4 @@ ViewConfig.HongJian = {name = "HongJian",}
 ViewConfig.HongJianScene = {name = "HongJianScene",prefab = "Prefabs/UI/HongJian/HongJianScene.prefab",}
 ViewConfig.HongJianConsole = {name = "HongJianConsole",prefab = "Prefabs/UI/HongJian/HongJianConsole.prefab",}
 ViewConfig.RoomDesk = {name = "RoomDesk",prefab = "Prefabs/UI/Room/RoomDesk.prefab",}
+ViewConfig.Battle = {name = "Battle",prefab = "Prefabs/UI/Battle/Battle.prefab",}

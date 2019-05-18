@@ -10,13 +10,14 @@ end
 
 local BaseMediator = require("Game.Core.Ioc.BaseMediator")
 ---@class Game.Modules.Notice.View.WorldMdr : Game.Core.Ioc.BaseMediator
----@field public currScene Game.Modules.World.Scenes.BaseScene
+---@field currScene Game.Modules.World.Scenes.BaseScene
+---@field currLevelName string
 local WorldMdr = class("WorldMdr",BaseMediator)
 
 function WorldMdr:Ctor()
     BaseMediator.Ctor(self)
     self.tempLevel = nil;
-    self.currLevel = "";
+    self.currLevelName = "";
     self.currScene = nil;
     self.nextScene = nil;
 
@@ -35,13 +36,14 @@ function WorldMdr:GetTempLevel()
     end
 end
 
+---@param sceneInfo SceneInfo
 function WorldMdr:EnterScene(sceneInfo, callback)
     if string.isValid(sceneInfo.level) then
         if self.currScene then
             self.currScene:OnExitScene()
         end
         log("Will enter "..sceneInfo.level)
-        if self.currLevel == sceneInfo.level then
+        if self.currLevelName == sceneInfo.level then
             logError("you can not load then same scene - " .. sceneInfo.level)
         elseif sceneInfo.level == "Temp" then
             self.tempLevel = self:GetTempLevel()
@@ -63,19 +65,18 @@ function WorldMdr:EnterNextScene()
     end)
 end
 
-function WorldMdr:LoadLevel(level,sceneInfo, callback)
-    sceneMgr:LoadSceneAsync(level, function (unityScene)
+function WorldMdr:LoadLevel(levelName, sceneInfo, callback)
+    sceneMgr:LoadSceneAsync(levelName, function (unityScene)
         local sceneType = require(string.format("Game.Modules.World.Scenes.%sScene",sceneInfo.sceneName,sceneInfo.sceneName))
         if sceneType == nil then
             logError("can not find scene "..sceneInfo.sceneName)
             logStack()
             return
         end
-        local scene = sceneType.New()
-        scene.unityScene = unityScene
+        local scene = sceneType.New(sceneInfo, unityScene)
         log("进入场景:"..sceneInfo.debugName)
         self.currScene = scene
-        self.currLevel = level
+        self.currLevelName = levelName
         scene:OnEnterScene()
         if callback ~= nil then
             callback()

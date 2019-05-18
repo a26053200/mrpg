@@ -38,7 +38,7 @@ end
 
 function RoleCreateMdr:onFetchRandomName(data)
     log("角色随机名字:"..data.roleName)
-    self.gameObject:SetInputField("H/InputField", data.roleName)
+    self.gameObject:GetInputField("H/InputField").text = data.roleName
 end
 
 function RoleCreateMdr:onCreateRole(data)
