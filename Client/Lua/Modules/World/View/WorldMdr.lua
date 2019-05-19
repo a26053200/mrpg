@@ -15,7 +15,7 @@ local BaseMediator = require("Game.Core.Ioc.BaseMediator")
 local WorldMdr = class("WorldMdr",BaseMediator)
 
 function WorldMdr:Ctor()
-    BaseMediator.Ctor(self)
+    WorldMdr.super.Ctor(self)
     self.tempLevel = nil;
     self.currLevelName = "";
     self.currScene = nil;

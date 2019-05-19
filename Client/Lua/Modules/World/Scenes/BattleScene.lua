@@ -5,13 +5,14 @@
 ---
 
 local BaseScene = require('Game.Modules.World.Scenes.BaseScene')
+
 ---@class Game.Modules.World.Scenes.BattleScene : Game.Modules.World.Scenes.BaseScene
-local BattleScene = class("BattleScene",BaseScene)
+local BattleScene = class("Game.Modules.World.Scenes.BattleScene",BaseScene)
 
 ---@param sceneInfo SceneInfo
 ---@param unityScene UnityEngine.SceneManagement.Scene
 function BattleScene:Ctor(sceneInfo, unityScene)
-    BaseScene.Ctor(self, sceneInfo, unityScene)
+    BattleScene.super.Ctor(self, sceneInfo, unityScene)
 end
 
 function BattleScene:OnEnterScene()

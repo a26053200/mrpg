@@ -4,6 +4,13 @@
 --- DateTime: 2019-05-18-23:23:09
 ---
 
+---@class SceneItemInfo
+---@field id string|number
+
+---@class AvatarInfo
+---@field prefabUrl string
+
+
 local BaseModel = require("Game.Core.Ioc.BaseModel")
 ---@class Game.Modules.Battle.Model.BattleModel : Game.Core.Ioc.BaseModel
 ---@field battleService Game.Modules.Battle.Service.BattleService

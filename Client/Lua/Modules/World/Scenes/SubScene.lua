@@ -10,12 +10,12 @@ local LuaMonoBehaviour = require('Betel.LuaMonoBehaviour')
 ---@field New fun(subSceneInfo:SubSceneInfo, unityScene:UnityEngine.SceneManagement.Scene)
 ---@field unityScene UnityEngine.SceneManagement.Scene
 ---@field subSceneInfo SubSceneInfo
-local SubScene = class("BaseScene",LuaMonoBehaviour)
+local SubScene = class("Game.Modules.World.Scenes.SubScene",LuaMonoBehaviour)
 
 ---@param subSceneInfo SubSceneInfo
 ---@param unityScene UnityEngine.SceneManagement.Scene
 function SubScene:Ctor(subSceneInfo, unityScene)
-    LuaMonoBehaviour.Ctor(self)
+    SubScene.super.Ctor(self)
     self.subSceneInfo = subSceneInfo
     self.unityScene = unityScene
 end
@@ -24,9 +24,11 @@ function SubScene:Init()
     UnityEngine.SceneManagement.SceneManager.SetActiveScene(self.unityScene)
 end
 
-function SubScene:Unload()
+function SubScene:Unload(callback)
     sceneMgr:UnloadSubSceneAsync(self.subSceneInfo.level, function(levelName)
-
+        if callback ~= nil then
+            callback(levelName)
+        end
     end)
 end
 

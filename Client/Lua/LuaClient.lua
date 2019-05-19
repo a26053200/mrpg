@@ -10,13 +10,13 @@ local LuaClient = {}
 function LuaClient.Start()
     LuaClient.RequireGlobalDefines()
 
+    LuaClient.GameStart()
+
     setmetatable(_G,{
         __newindex = function(_, name, value)
             error("禁止使用全局变量")
         end
     })
-
-    LuaClient.GameStart()
 end
 
 --加载全局定义
@@ -25,7 +25,6 @@ function LuaClient.RequireGlobalDefines()
     require "Game.Core.init"
     require "Game.Config.init"
     require "Game.Manager.init"
-    require "Game.Core.Launch"
 end
 
 

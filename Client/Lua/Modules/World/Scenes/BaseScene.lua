@@ -19,7 +19,7 @@ local BaseScene = class("BaseScene",LuaMonoBehaviour)
 ---@param sceneInfo SceneInfo
 ---@param unityScene UnityEngine.SceneManagement.Scene
 function BaseScene:Ctor(sceneInfo, unityScene)
-    LuaMonoBehaviour.Ctor(self)
+    BaseScene.super.Ctor(self)
     self.sceneInfo = sceneInfo
     self.unityScene = unityScene
     self:Init()
@@ -53,7 +53,23 @@ function BaseScene:LoadSubLevel(subLevelIndex, callback)
             end
         end)
     end
+end
 
+function BaseScene:UnloadSubLevel(subLevelIndex, callback)
+    if self.sceneInfo.subLevels == nil or #self.sceneInfo.subLevels == 0 then
+        logError("There is no sub levels in this scene: "..self.sceneInfo.sceneName)
+    else
+        local subSceneInfo = self.sceneInfo.subLevels[subLevelIndex]
+        local subScene = SubScene.New(subSceneInfo, unityScene)
+        log("加载子场景完成:"..subSceneInfo.level)
+        self.currSubSceneInfo = scene
+        self.currSubScene = subScene
+        subScene:Unload(function()
+            if callback ~= nil then
+                callback(levelName)
+            end
+        end)
+    end
 end
 
 return BaseScene
