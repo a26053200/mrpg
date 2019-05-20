@@ -10,6 +10,7 @@
 gameMgr = Framework.GameManager.GetGameManager()
 sceneMgr = Framework.GameManager.GetSceneManager()
 netMgr = Framework.GameManager.GetNetworkManager()
+monoMgr = Framework.GameManager.GetMonoBehaviourManager()
 
 LuaHelper = Framework.LuaHelper
 
