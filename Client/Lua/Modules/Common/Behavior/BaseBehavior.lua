@@ -3,3 +3,43 @@
 --- Created by zhengnan.
 --- DateTime: 2019/5/20 15:51
 ---
+
+local StateAction = require("Game.Modules.Common.Behavior.StateAction")
+local StateMachine = require("Game.Modules.Common.Behavior.StateMachine")
+local LuaMonoBehaviour = require("Betel.LuaMonoBehaviour")
+
+---@class Game.Modules.Common.Behavior.BaseBehavior : Betel.LuaMonoBehaviour
+---@field New function<selectable:boolean>
+---@field stateMachine Game.Modules.Common.Behavior.StateMachine
+local BaseBehavior = class("Game.Modules.Common.Behavior.BaseBehavior",LuaMonoBehaviour)
+
+---@param gameObject UnityEngine.GameObject
+function BaseBehavior:Ctor(gameObject)
+    BaseBehavior.super.Ctor(self, gameObject)
+
+    self.stateMachine = StateMachine.New()
+end
+
+function BaseBehavior:AppendState(OnStateEnter, name)
+    local node = {} ---@type StateNode
+    node.name = name
+    node.OnEnter = Handler.New(OnStateEnter, self)
+    self:AppendStateNode(node)
+end
+
+---@param node StateNode
+function BaseBehavior:AppendStateNode(node)
+    self.stateMachine:AppendState(StateAction.New(node))
+end
+
+---@param node StateNode
+function BaseBehavior:Start()
+    self.stateMachine:Start()
+end
+
+---@param node StateNode
+function BaseBehavior:NextState()
+    self.stateMachine:NextState()
+end
+
+return BaseBehavior

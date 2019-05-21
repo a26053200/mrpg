@@ -21,11 +21,13 @@ local StateAction = class("Game.Modules.Common.Behavior.StateAction")
 ---@param node StateNode
 function StateAction:Ctor(node)
     self.node = node
-
+    self.startTime = Time.time
+    self.execute = false
 end
 
 function StateAction:Start()
     self.startTime = Time.time
+    self.execute = false
 end
 
 function StateAction:Update()

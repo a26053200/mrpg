@@ -4,6 +4,7 @@
 --- DateTime: 2019-05-18-23:22:49
 ---
 
+local HeroBehavior = require("Game.Modules.Battle.Behaviors.HeroBehavior")
 local BaseMediator = require("Game.Core.Ioc.BaseMediator")
 ---@class Game.Modules.Battle.View.BattleMdr : Game.Core.Ioc.BaseMediator
 ---@field battleModel Game.Modules.Battle.Model.BattleModel
@@ -11,7 +12,8 @@ local BaseMediator = require("Game.Core.Ioc.BaseMediator")
 local BattleMdr = class("BattleMdr",BaseMediator)
 
 function BattleMdr:OnInit()
-    
+    local hero = HeroBehavior.New()
+    hero:Start()
 end
 
 return BattleMdr

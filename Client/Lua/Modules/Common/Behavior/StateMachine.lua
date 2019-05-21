@@ -8,7 +8,7 @@
 local StateAction = require("Game.Modules.Common.Behavior.StateAction")
 
 ---@class Game.Modules.Common.Behavior.StateMachine
----@field New fun(node:StateNode):Game.Modules.Common.Behavior.StateMachine
+---@field New fun():Game.Modules.Common.Behavior.StateMachine
 ---@field currState Game.Modules.Common.Behavior.StateAction
 ---@field startTime number 开始时间
 local StateMachine = class("Game.Modules.Common.Behavior.StateMachine")
@@ -34,6 +34,7 @@ function StateMachine:Start(cycleOverCallback)
     self.currState = nil
     self.curr2DList = self.state2DList:Clone()
     AddEventListener(Event.Update, self.Update, self)
+    self:NextState()
 end
 
 function StateMachine:Stop()
@@ -63,34 +64,40 @@ function StateMachine:NextState()
             self.cycleOverCallback()
         end
     end
+    self.currState = nil
     local state = self.curr2DList:Shift()
-    if state._cname == StateAction._cname then
+    if state.__cname == StateAction.__cname then
         self.currState = state
     elseif state._cname == List._cname then
-        --随机选择 (这个地方有待优化)
-        local randomIdx = math.random(1, state:Size())
-        self.currState = state[randomIdx]
-        while not self.currState:CanExecute() do
-            randomIdx = math.random(1, state:Size())
-            self.currState = state[randomIdx]
+        --随机选择
+        local randomIdxs = Math3D.GetRandomArray(state:Size())
+        for i = 1, #randomIdxs do
+            if state[randomIdxs[i]]:CanExecute() then
+                self.currState = state[randomIdxs[i]]
+                break;
+            end
         end
     else
         logError("State machine queue error!!!")
     end
-    self.currState:Start()
+    if self.currState then
+        self.currState:Start()
+    end
 end
 
 function StateMachine:Update()
     if self.currState then
         local state = self.currState
         local isOver = state:IsOver()
-        if not state.execute and state.node.OnEnter ~nil then
+        if not state.execute and state.node.OnEnter ~= nil then
             state.execute = true
             state.node.OnEnter:Execute(state)
         end
         if isOver then
             self:NextState()
         end
+    else
+        --self:NextState()
     end
 end
 
