@@ -4,17 +4,15 @@
 --- DateTime: 2019/5/21 22:58
 ---
 
-local AvatarBehavior = require('Game.Modules.Battle.Behaviors.AvatarBehavior')
+local HeroBehavior = require('Game.Modules.Battle.Behaviors.HeroBehavior')
 
----@class Game.Modules.Battle.Behaviors.HeroBehavior : Game.Modules.Battle.Behaviors.AvatarBehavior
----@field New fun() : Game.Modules.Battle.Behaviors.HeroBehavior
----@field hero Game.Modules.Battle.Items.Hero
-local HeroBehavior = class("Game.Modules.Battle.Behaviors.HeroBehavior",AvatarBehavior)
+---@class Game.Modules.Battle.Behaviors.MainHeroBehavior : Game.Modules.Battle.Behaviors.HeroBehavior
+---@field New fun() : Game.Modules.Battle.Behaviors.MainHeroBehavior
+local MainHeroBehavior = class("Game.Modules.Battle.Behaviors.MainHeroBehavior",HeroBehavior)
 
----@param hero Game.Modules.Battle.Items.Hero
-function HeroBehavior:Ctor(hero)
-    HeroBehavior.super.Ctor(self, hero)
-    self.hero = hero
+---@param hero Game.Modules.Battle.Items.MainHero
+function MainHeroBehavior:Ctor(hero)
+    MainHeroBehavior.super.Ctor(self, hero)
     local s_id = 1
     self:AppendState(function()
         coroutine.start(function()
@@ -33,8 +31,8 @@ function HeroBehavior:Ctor(hero)
     end)
 end
 
-function HeroBehavior:Dispose()
-    HeroBehavior.super.Dispose(self)
+function MainHeroBehavior:Dispose()
+    MainHeroBehavior.super.Dispose(self)
 end
 
-return HeroBehavior
+return MainHeroBehavior

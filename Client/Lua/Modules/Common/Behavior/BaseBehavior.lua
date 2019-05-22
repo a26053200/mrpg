@@ -18,12 +18,21 @@ function BaseBehavior:Ctor(gameObject)
     BaseBehavior.super.Ctor(self, gameObject)
 
     self.stateMachine = StateMachine.New()
+
 end
 
 function BaseBehavior:AppendState(OnStateEnter, name)
     local node = {} ---@type StateNode
     node.name = name
     node.OnEnter = Handler.New(OnStateEnter, self)
+    self:AppendStateNode(node)
+end
+
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+function BaseBehavior:AppendBehavior(behavior, name)
+    local node = {} ---@type StateNode
+    node.name = name
+    node.OnEnter = Handler.New(function() behavior:Start() end , self)
     self:AppendStateNode(node)
 end
 

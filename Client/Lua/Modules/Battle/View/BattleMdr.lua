@@ -4,16 +4,31 @@
 --- DateTime: 2019-05-18-23:22:49
 ---
 
-local HeroBehavior = require("Game.Modules.Battle.Behaviors.HeroBehavior")
+local AttachCamera = require("Game.Modules.Common.Camera.AttachCamera")
+local MainHero = require("Game.Modules.Battle.Items.MainHero")
 local BaseMediator = require("Game.Core.Ioc.BaseMediator")
+
 ---@class Game.Modules.Battle.View.BattleMdr : Game.Core.Ioc.BaseMediator
 ---@field battleModel Game.Modules.Battle.Model.BattleModel
 ---@field battleService Game.Modules.Battle.Service.BattleService
+---@field mainHero Game.Modules.Battle.Items.MainHero
+---@field attachCamera Game.Modules.Common.Camera.AttachCamera
+---@field points table<number, UnityEngine.Vector3>
 local BattleMdr = class("BattleMdr",BaseMediator)
 
 function BattleMdr:OnInit()
-    local hero = HeroBehavior.New()
-    hero:Start()
+
+    local pointsObj = self.scene.currSubScene:GetRootObjByName("Points")
+    self.points = {}
+    for i = 1, 6 do
+        self.points[i] = pointsObj:FindChild("p" .. i).transform.position
+    end
+
+    self.mainHero = MainHero.New(AvatarConfig.Get("TestHero"))
+    self.mainHero.transform.position = self.points[1]
+
+    self.attachCamera = AttachCamera.New(Camera.main)
+    self.attachCamera:Attach(self.mainHero.gameObject)
 end
 
 return BattleMdr

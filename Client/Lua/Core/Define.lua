@@ -14,9 +14,12 @@ monoMgr = Framework.GameManager.GetMonoBehaviourManager()
 
 LuaHelper = Framework.LuaHelper
 
----Game
-require("Game.Config.Action")
+--- Data Config
+Action          = require("Game.Config.Action")
+AvatarConfig    = require("Game.Config.AvatarConfig") ---@type AvatarConfig
 
+
+---Game
 Alert = require("Game.Modules.Common.View.Alert")
 Tips = require("Game.Modules.Common.View.Tips")
 NetModal = require("Game.Modules.Common.View.NetModal")
@@ -24,10 +27,3 @@ ImageHelper = require("Game.Modules.Common.View.ImageHelper")
 
 World = {}
 World.ins = nil
-
---View 状态
-ViewStatus = {}
-ViewStatus.Loading      = "Loading"
-ViewStatus.Loaded       = "Loaded"
-ViewStatus.Unloading    = "Unloading"
-ViewStatus.Unloaded     = "Unloaded"

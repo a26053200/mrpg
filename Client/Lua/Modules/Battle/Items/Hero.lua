@@ -7,10 +7,14 @@
 local Avatar = require('Game.Modules.Battle.Items.Avatar')
 
 ---@class Game.Modules.Battle.Items.Hero : Game.Modules.Battle.Items.Avatar
+---@param heroInfo HeroInfo
+---@param behavior Game.Modules.Battle.Behaviors.HeroBehavior
 local Hero = class("Game.Modules.Battle.Items.Hero",Avatar)
 
-function Hero:Ctor(sceneItemInfo)
-    Hero.super.Ctor(self, sceneItemInfo)
+---@param heroInfo HeroInfo
+function Hero:Ctor(heroInfo)
+    Hero.super.Ctor(self, heroInfo)
+    self.heroInfo = heroInfo
 end
 
 function Hero:Dispose()

@@ -24,6 +24,17 @@ function SubScene:Init()
     UnityEngine.SceneManagement.SceneManager.SetActiveScene(self.unityScene)
 end
 
+---@return UnityEngine.GameObject
+function SubScene:GetRootObjByName(name)
+    local rootObjs = self.unityScene:GetRootGameObjects()
+    for i = 0, rootObjs.Length - 1 do
+        if rootObjs[i].name == name then
+            return rootObjs[i]
+        end
+    end
+    return nil
+end
+
 function SubScene:Unload(callback)
     sceneMgr:UnloadSubSceneAsync(self.subSceneInfo.level, function(levelName)
         if callback ~= nil then

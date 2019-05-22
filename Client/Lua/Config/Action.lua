@@ -4,7 +4,7 @@
 --- DateTime: 2019/1/10 0:17
 ---
 
-Action = {}
+local Action = {}
 
 Action.LoginAccount = { server = "AccountServer", action = "account@account_login", fields = "username,password" }
 
@@ -55,3 +55,5 @@ Action.PushHJCardSlot = "push@hj_card_slot"
 
 --推送轮到谁出牌
 Action.PushHJWhoseTurn = "push@hj_whose_turn"
+
+return Action

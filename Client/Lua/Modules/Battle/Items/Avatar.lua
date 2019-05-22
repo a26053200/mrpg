@@ -7,11 +7,18 @@
 local RenderItem = require('Game.Modules.Battle.Items.RenderItem')
 
 ---@class Game.Modules.Battle.Items.Avatar : Game.Modules.Battle.Items.RenderItem
----@field renderObj UnityEngine.GameObject
+---@field avatarInfo AvatarInfo
 local Avatar = class("Game.Modules.Battle.Items.Avatar",RenderItem)
 
-function Avatar:Ctor(sceneItemInfo)
-    Avatar.super.Ctor(self, sceneItemInfo)
+---@param avatarInfo AvatarInfo
+function Avatar:Ctor(avatarInfo)
+    Avatar.super.Ctor(self, avatarInfo)
+    self.avatarInfo = avatarInfo
+end
+
+---@param enable boolean
+function Avatar:SetBehaviorEnable(enable)
+
 end
 
 function Avatar:Dispose()

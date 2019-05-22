@@ -12,10 +12,20 @@ local RenderItem = class("Game.Modules.Battle.Items.RenderItem",SceneItem)
 
 function RenderItem:Ctor(sceneItemInfo)
     RenderItem.super.Ctor(self, sceneItemInfo)
+    self:LoadRenderObj()
 end
 
 function RenderItem:LoadRenderObj()
-    self.renderObj = Instantiate()
+    if self.sceneItemInfo.prefabUrl and self.sceneItemInfo.prefabUrl ~= "" then
+        self.renderObj = Instantiate(self.sceneItemInfo.prefabUrl,self.transform)
+        self.renderObj:ResetTransform()
+        self:OnLoadedRenderObj()
+    end
+end
+
+---@param visible boolean
+function RenderItem:SetRenderObjVisible(visible)
+    self.renderObj:SetActive(visible)
 end
 
 function RenderItem:OnLoadedRenderObj()

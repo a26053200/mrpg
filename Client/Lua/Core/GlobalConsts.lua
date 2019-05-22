@@ -31,6 +31,14 @@ FrameTime = 1 / FrameRate
 ---===============
 --- 枚举
 ---===============
+
+--View 状态
+ViewStatus = {}
+ViewStatus.Loading      = "Loading"
+ViewStatus.Loaded       = "Loaded"
+ViewStatus.Unloading    = "Unloading"
+ViewStatus.Unloaded     = "Unloaded"
+
 GameName =
 {
     Hong_Jian = "Hong_Jian"

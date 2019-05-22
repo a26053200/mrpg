@@ -4,11 +4,59 @@
 --- DateTime: 2019-05-18-23:23:09
 ---
 
+--场景单位信息
 ---@class SceneItemInfo
 ---@field id string|number
-
----@class AvatarInfo
 ---@field prefabUrl string
+
+--技能
+---@class SkillInfo
+---@field animName string
+---@field accounts table<number, AccountInfo>
+
+--结算
+---@class AccountInfo
+---@field delay number
+---@field shakeCamera ShakeCamera
+---@field baseAttr BaseAttribute
+
+--相机震动
+---@class ShakeCamera
+---@field delay number
+
+--基础属性
+---@class BaseAttribute
+---@field hpMax number
+---@field hpMin number
+---@field atkMax number
+---@field atkMin number
+---@field defMax number
+---@field defMin number
+---@field critMax number
+---@field critMin number
+
+--动态属性
+---@class Attribute
+---@field maxHp number
+---@field currHp number
+---@field atk number
+---@field def number
+---@field crit number
+
+--Avatar基础属性
+---@class AvatarInfo : SceneItemInfo
+---@field moveSpeed number
+---@field animBorn string
+---@field animIdle string
+---@field animAtkIdle string
+---@field animWalk string
+---@field animRun string
+---@field baseAttr BaseAttribute
+---@field attr Attribute
+---@field skills table<number, AccountInfo>
+
+---@class HeroInfo : AvatarInfo
+---@field heroName string
 
 
 local BaseModel = require("Game.Core.Ioc.BaseModel")
