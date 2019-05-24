@@ -4,12 +4,8 @@
 --- DateTime: 2018/6/29 23:58
 ---
 
-function World.EnterScene(sceneInfo, callback)
-    World.ins:EnterScene(sceneInfo, callback)
-end
-
 local BaseMediator = require("Game.Core.Ioc.BaseMediator")
----@class Game.Modules.Notice.View.WorldMdr : Game.Core.Ioc.BaseMediator
+---@class Game.Modules.World.View.WorldMdr : Game.Core.Ioc.BaseMediator
 ---@field currScene Game.Modules.World.Scenes.BaseScene
 ---@field currLevelName string
 local WorldMdr = class("WorldMdr",BaseMediator)
@@ -21,7 +17,7 @@ function WorldMdr:Ctor()
     self.currScene = nil;
     self.nextScene = nil;
 
-    World.ins = self
+    World.mdr = self
 end
 
 function WorldMdr:OnInit()

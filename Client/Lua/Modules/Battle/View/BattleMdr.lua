@@ -4,6 +4,8 @@
 --- DateTime: 2019-05-18-23:22:49
 ---
 
+local BattleBehavior = require("Game.Modules.Battle.Behaviors.BattleBehavior")
+local BornArea = require("Game.Modules.Battle.Behaviors.BornWave")
 local AttachCamera = require("Game.Modules.Common.Camera.AttachCamera")
 local MainHero = require("Game.Modules.Battle.Items.MainHero")
 local BaseMediator = require("Game.Core.Ioc.BaseMediator")
@@ -14,6 +16,8 @@ local BaseMediator = require("Game.Core.Ioc.BaseMediator")
 ---@field mainHero Game.Modules.Battle.Items.MainHero
 ---@field attachCamera Game.Modules.Common.Camera.AttachCamera
 ---@field points table<number, UnityEngine.Vector3>
+---@field battleBehavior Game.Modules.Battle.Behaviors.BattleBehavior
+---@field bornAreas table<number, Game.Modules.Battle.Behaviors.BornArea>
 local BattleMdr = class("BattleMdr",BaseMediator)
 
 function BattleMdr:OnInit()
@@ -23,12 +27,27 @@ function BattleMdr:OnInit()
     for i = 1, 6 do
         self.points[i] = pointsObj:FindChild("p" .. i).transform.position
     end
+    World.points = self.points
 
     self.mainHero = MainHero.New(AvatarConfig.Get("TestHero"))
     self.mainHero.transform.position = self.points[1]
 
     self.attachCamera = AttachCamera.New(Camera.main)
     self.attachCamera:Attach(self.mainHero.gameObject)
+
+    local battleInfo = require("Game.Config.Excel.Battle_Test") ---@type BattleInfo
+
+    self.battleBehavior = BattleBehavior.New(battleInfo, self.points)
+    self.battleBehavior:CreateBattle()
+
+    self:StartBattle()
+end
+
+function BattleMdr:StartBattle()
+    self:StartCoroutine(function()
+        coroutine.wait(1)
+        self.mainHero:SetBehaviorEnable(true)
+    end)
 end
 
 return BattleMdr

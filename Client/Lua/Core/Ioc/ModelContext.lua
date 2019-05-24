@@ -14,13 +14,8 @@ end
 function ModelContext:Launch()
     --TODO
 	self.binder:Bind(require("Game.Modules.Battle.Model.BattleModel")):ToSingleton()
-	self.binder:Bind(require("Game.Modules.HongJian.Model.HongJianModel")):ToSingleton()
-	self.binder:Bind(require("Game.Modules.Lobby.Model.LobbyModel")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.Login.Model.LoginModel")):ToSingleton()
-	self.binder:Bind(require("Game.Modules.Newbie.Model.NewbieModel")):ToSingleton()
-	self.binder:Bind(require("Game.Modules.Robot.Model.RobotModel")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.Role.Model.RoleModel")):ToSingleton()
-	self.binder:Bind(require("Game.Modules.Room.Model.RoomModel")):ToSingleton()
 	self.binder:Bind(require("Game.Modules.World.Model.WorldModel")):ToSingleton()
     --TODO
 end

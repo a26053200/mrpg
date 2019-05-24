@@ -58,6 +58,31 @@
 ---@class HeroInfo : AvatarInfo
 ---@field heroName string
 
+---@class MonsterInfo : AvatarInfo
+---@field quality string
+
+
+---@class BattlePoolInfo
+---@field avatarName string
+---@field init number
+
+
+---@class AreaInfo
+---@field bornPos number
+---@field waves table<number, WaveInfo>
+
+---@class WaveInfo
+---@field delay string
+---@field borns table<number, BornInfo>
+
+---@class BornInfo
+---@field avatarName string
+---@field numMin number
+---@field numMax number
+
+---@class BattleInfo
+---@field pools table<number, BattleInfo>
+---@field areas table<number, AreaInfo>
 
 local BaseModel = require("Game.Core.Ioc.BaseModel")
 ---@class Game.Modules.Battle.Model.BattleModel : Game.Core.Ioc.BaseModel

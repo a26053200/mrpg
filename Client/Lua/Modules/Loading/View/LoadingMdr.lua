@@ -10,7 +10,7 @@ local BaseMediator = require("Game.Core.Ioc.BaseMediator")
 local LoadingMdr = class("LoadingMdr",BaseMediator)
 
 --测试用加载时间
-local WaitTime = 1
+local WaitTime = 0.2
 
 function LoadingMdr:Ctor()
     LoadingMdr.super.Ctor(self)
@@ -25,7 +25,7 @@ function LoadingMdr:OnInit()
             coroutine.step(1)
             self.loadingBar.value = (Time.time - startTime) / WaitTime
         end
-        World.ins:EnterNextScene()
+        World.mdr:EnterNextScene()
         vmgr:UnloadView(ViewConfig.Loading)
     end)
 end

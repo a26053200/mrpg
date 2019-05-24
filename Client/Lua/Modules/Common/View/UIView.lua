@@ -13,7 +13,7 @@ local UIView = class("UIView",LuaMonoBehaviour)
 
 function UIView:Ctor(prefab,parent)
     UIView.super.Ctor(self)
-    self.scene = World.ins.currScene
+    self.scene = vmgr.scene
     if type(prefab) == TYPE.string then
         local prefabObj = Res.LoadPrefab(prefab)
         self.gameObject = Instantiate(prefabObj,parent)

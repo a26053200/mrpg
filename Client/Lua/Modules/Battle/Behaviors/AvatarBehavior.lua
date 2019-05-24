@@ -4,10 +4,12 @@
 --- DateTime: 2019/5/21 22:48
 ---
 
+local AutoMove = require('Game.Modules.Battle.Behaviors.AutoMove')
 local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.AvatarBehavior : Game.Modules.Common.Behavior.BaseBehavior
 ---@field owner Game.Modules.Battle.Items.Avatar
+---@field autoMove Game.Modules.Battle.Behaviors.AutoMove
 local AvatarBehavior = class("Game.Modules.Battle.Behaviors.AvatarBehavior",BaseBehavior)
 
 local s_id = 1
@@ -17,6 +19,7 @@ function AvatarBehavior:Ctor(owner)
     s_id = s_id + 1
     AvatarBehavior.super.Ctor(self)
     self.owner = owner
+    self.autoMove = AutoMove.New(self.owner)
 end
 
 function AvatarBehavior:Dispose()

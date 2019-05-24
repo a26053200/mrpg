@@ -6,5 +6,4 @@
 
 require "Game.Config.ViewConfig"
 require "Game.Config.WorldConfig"
-require "Game.Config.Card.CardDefine"
 log("Global config has all require")

@@ -24,6 +24,6 @@ Alert = require("Game.Modules.Common.View.Alert")
 Tips = require("Game.Modules.Common.View.Tips")
 NetModal = require("Game.Modules.Common.View.NetModal")
 ImageHelper = require("Game.Modules.Common.View.ImageHelper")
+BattleEvent  = require("Game.Modules.Battle.Events.BattleEvent")
 
-World = {}
-World.ins = nil
+World = require("Game.Modules.World.World")

@@ -8,6 +8,7 @@ local RenderItem = require('Game.Modules.Battle.Items.RenderItem')
 
 ---@class Game.Modules.Battle.Items.Avatar : Game.Modules.Battle.Items.RenderItem
 ---@field avatarInfo AvatarInfo
+---@param behavior Game.Modules.Battle.Behaviors.AvatarBehavior
 local Avatar = class("Game.Modules.Battle.Items.Avatar",RenderItem)
 
 ---@param avatarInfo AvatarInfo

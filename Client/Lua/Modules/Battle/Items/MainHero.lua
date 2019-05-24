@@ -14,7 +14,6 @@ local MainHero = class("Game.Modules.Battle.Items.MainHero",Hero)
 ---@param heroInfo HeroInfo
 function MainHero:Ctor(heroInfo)
     MainHero.super.Ctor(self, heroInfo)
-    self.heroInfo = heroInfo
 end
 
 function MainHero:OnLoadedRenderObj()
@@ -30,8 +29,8 @@ function MainHero:SetBehaviorEnable(enable)
         self.behavior:Dispose()
     end
     if enable then
-        self.behavior = MainHeroBehavior.New(self.gameObject)
-        self.behavior:Start()
+        self.behavior = MainHeroBehavior.New(self)
+        self.behavior:Run()
     end
 end
 

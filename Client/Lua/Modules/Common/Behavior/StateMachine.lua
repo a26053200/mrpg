@@ -29,10 +29,11 @@ function StateMachine:Ctor()
     self.curr2DList = nil
 end
 
-function StateMachine:Start(cycleOverCallback)
+function StateMachine:Run(cycleOverCallback)
     self.cycleOverCallback = cycleOverCallback
     self.currState = nil
     self.curr2DList = self.state2DList:Clone()
+    log("StateMachine:Run " .. s_id)
     AddEventListener(Event.Update, self.Update, self)
     self:NextState()
 end

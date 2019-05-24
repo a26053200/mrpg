@@ -163,4 +163,10 @@ function AvatarConfig.Get(avatarName)
     end
 end
 
+---@return AvatarInfo
+function AvatarConfig.Clone(avatarName)
+    local info = AvatarConfig.Get(avatarName)
+    return clone(info)
+end
+
 return AvatarConfig

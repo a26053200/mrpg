@@ -11,6 +11,7 @@ local LuaMonoBehaviour = require("Betel.LuaMonoBehaviour")
 ---@class Game.Modules.Common.Behavior.BaseBehavior : Betel.LuaMonoBehaviour
 ---@field New function<selectable:boolean>
 ---@field stateMachine Game.Modules.Common.Behavior.StateMachine
+---@field lastBehavior Game.Modules.Common.Behavior.BaseBehavior
 local BaseBehavior = class("Game.Modules.Common.Behavior.BaseBehavior",LuaMonoBehaviour)
 
 ---@param gameObject UnityEngine.GameObject
@@ -18,7 +19,6 @@ function BaseBehavior:Ctor(gameObject)
     BaseBehavior.super.Ctor(self, gameObject)
 
     self.stateMachine = StateMachine.New()
-
 end
 
 function BaseBehavior:AppendState(OnStateEnter, name)
@@ -32,7 +32,13 @@ end
 function BaseBehavior:AppendBehavior(behavior, name)
     local node = {} ---@type StateNode
     node.name = name
-    node.OnEnter = Handler.New(function() behavior:Start() end , self)
+    node.OnEnter = Handler.New(function()
+        if self.lastBehavior then
+            self.lastBehavior:Stop()
+        end
+        behavior:Run()
+        self.lastBehavior = behavior
+    end, self)
     self:AppendStateNode(node)
 end
 
@@ -42,13 +48,28 @@ function BaseBehavior:AppendStateNode(node)
 end
 
 ---@param node StateNode
-function BaseBehavior:Start()
-    self.stateMachine:Start()
+function BaseBehavior:Run()
+    self.stateMachine:Run()
+end
+
+---@param node StateNode
+function BaseBehavior:Stop()
+    self.stateMachine:Stop()
 end
 
 ---@param node StateNode
 function BaseBehavior:NextState()
     self.stateMachine:NextState()
+end
+
+function BaseBehavior:Debug(msg)
+    print(msg)
+end
+
+---@param node StateNode
+function BaseBehavior:Dispose()
+    BaseBehavior.super.Dispose(self)
+    self.stateMachine:Stop()
 end
 
 return BaseBehavior
