@@ -63,10 +63,12 @@ function LoginMdr:On_Click_BtnRegister()
 end
 
 function LoginMdr:On_Click_BtnLogin()
-    self:validityInput(function()
-        self.loginService:HttpLogin(self.username, self.password, handler(self,self.OnHttpLogin))
-    end)
+    --self:validityInput(function()
+    --    self.loginService:HttpLogin(self.username, self.password, handler(self,self.OnHttpLogin))
+    --end)
+    World.EnterScene(WorldConfig.Battle)
     self:fetchInput()
+    vmgr:UnloadView(ViewConfig.Login)
 end
 
 function LoginMdr:OnHttpRegister(data)

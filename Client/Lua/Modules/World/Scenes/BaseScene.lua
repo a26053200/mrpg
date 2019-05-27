@@ -49,7 +49,7 @@ function BaseScene:LoadSubLevel(subLevelIndex, callback)
             self.currSubScene = subScene
             subScene:Init()
             if callback ~= nil then
-                callback()
+                callback(subScene)
             end
         end)
     end

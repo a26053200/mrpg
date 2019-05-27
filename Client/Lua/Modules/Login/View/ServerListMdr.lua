@@ -5,7 +5,6 @@
 ---
 
 local ServerItem = require("Game.Modules.Login.View.ServerItem")
-local UITools = require("Game.Core.Utils.UITools")
 local BaseMediator = require("Game.Core.Ioc.BaseMediator")
 ---@class Game.Modules.Login.View.ServerListMdr : Game.Core.Ioc.BaseMediator
 ---@field loginService Game.Modules.Login.Service.LoginService

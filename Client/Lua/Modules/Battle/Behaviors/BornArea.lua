@@ -5,21 +5,25 @@
 ---
 
 local BornWave = require("Game.Modules.Battle.Behaviors.BornWave")
-local Monster = require("Game.Modules.Battle.Items.Monster")
 local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.BornArea : Game.Modules.Common.Behavior.BaseBehavior
+---@field New fun() : Game.Modules.Common.Behavior.BornArea
 ---@field areaInfo AreaInfo
 ---@field points table<number, UnityEngine.Vector3>
 ---@field waves table<number, Game.Modules.Battle.Behaviors.BornWave>
+---@field areaRect UnityEngine.Rect
 local BornArea = class("Game.Modules.Battle.Behaviors.BornWave",BaseBehavior)
 
 ---@param areaInfo AreaInfo
----@param points table<number, UnityEngine.Vector3>
-function BornArea:Ctor(areaInfo, points)
+function BornArea:Ctor(areaInfo)
+    BornArea.super.Ctor(self)
     self.areaInfo = areaInfo
-    self.points = points
     self.waves = {}
+
+    local pos = World.points[self.areaInfo.bornPos]
+    self.areaRect = Tools3D.GetAreaNodeRect(World.grid, pos, self.areaInfo.rangeX, self.areaInfo.rangeY)
+    self.points = Tools3D.GetRectRandomPos(pos, self.areaRect, World.grid.nodeRadius)
 end
 
 function BornArea:Refresh()
@@ -27,7 +31,44 @@ function BornArea:Refresh()
         local wave = BornWave.New(self.areaInfo, self.areaInfo.waves[i], self.points)
         table.insert(self.waves, wave)
         wave:Refresh()
+        wave:Active()
     end
+end
+
+--获取可以到达的格子
+---@param src Game.Modules.Battle.Items.Monster
+function BornArea:GetReachableGrid(src, callback)
+    local soonGrid = Tools3D.GetRandomNeighboursNode(self.areaRect, src)
+    if soonGrid ~= nil and self:isEmptyGrid(soonGrid) then
+        if callback then
+            callback:Execute(soonGrid)
+        end
+    else
+        self:StartCoroutine(function()
+            while soonGrid == nil or not self:isEmptyGrid(soonGrid) do
+                coroutine.step(1)
+                soonGrid = Tools3D.GetRandomNeighboursNode(self.areaRect, src)
+            end
+            if callback then
+                callback:Execute(soonGrid)
+            end
+        end)
+    end
+end
+
+---@param node AStar.Node
+---@return
+function BornArea:isEmptyGrid(node)
+    for i = 1, #self.waves do
+        local wave = self.waves[i]
+        for j = 1, #wave.monsterList do
+            local monster = wave.monsterList[j]
+            if Tools3D.EqualGrid(monster.node, node) or Tools3D.EqualGrid(monster.soonNode, node) then
+                return false
+            end
+        end
+    end
+    return true
 end
 
 function BornArea:Active()

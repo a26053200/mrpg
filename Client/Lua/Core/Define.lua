@@ -20,6 +20,8 @@ AvatarConfig    = require("Game.Config.AvatarConfig") ---@type AvatarConfig
 
 
 ---Game
+Tools3D = require("Game.Core.Utils.Tools3D")
+UITools = require("Game.Core.Utils.UITools")
 Alert = require("Game.Modules.Common.View.Alert")
 Tips = require("Game.Modules.Common.View.Tips")
 NetModal = require("Game.Modules.Common.View.NetModal")

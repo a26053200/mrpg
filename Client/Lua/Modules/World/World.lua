@@ -7,12 +7,15 @@
 
 ---@class World
 ---@field mdr Game.Modules.World.View.WorldMdr
----@field battleScene Game.Modules.World.Scenes.BattleScene
+---@field battleSubScene Game.Modules.World.Scenes.SubScene
 ---@field battleBehavior Game.Modules.Battle.Behaviors.BattleBehavior
+---@field points table<number, UnityEngine.Vector3>
+---@field grid AStar.Grid
 local World = {}
 
-World.battleScene = nil
+World.battleSubScene = nil
 World.battleBehavior = nil
+World.points = nil
 
 function World.EnterScene(sceneInfo, callback)
     World.mdr:EnterScene(sceneInfo, callback)

@@ -12,6 +12,7 @@ local CanvasGroup       = "CanvasGroup"
 local Slider            = "Slider"
 local Text              = "Text"
 local ListView          = "ListView"
+local Animator          = "Animator"
 
 ---@param go UnityEngine.GameObject
 ---@return UnityEngine.RectTransform
@@ -23,21 +24,26 @@ end
 ---@param go UnityEngine.GameObject
 ---@return UnityEngine.UI.Text
 function GetText(go)
-    return go:GetCom(Text)
+    return go:GetText()
 end
 
+---@param go UnityEngine.GameObject
+---@return UnityEngine.UI.Text
+function GetInputField(go)
+    return go:GetInputField()
+end
 
 ---@param go UnityEngine.GameObject
 ---@return UnityEngine.UI.Image
 function GetImage(go)
-    return go:GetCom(Image)
+    return go:GetImage()
 end
 
 
 ---@param go UnityEngine.GameObject
 ---@return UnityEngine.UI.Button
 function GetButton(go)
-    return go:GetCom(Button)
+    return go:GetButton(Button)
 end
 
 ---@param go UnityEngine.GameObject
@@ -49,17 +55,23 @@ end
 ---@param go UnityEngine.GameObject
 ---@return UnityEngine.CanvasGroup
 function GetCanvasGroup(go)
-    return go:GetCom(CanvasGroup)
+    return go:GetCanvasGroup()
 end
 
 ---@param go UnityEngine.GameObject
 ---@return UnityEngine.UI.Slider
 function GetSlider(go)
-    return go:GetCom(Slider)
+    return go:GetSlider()
 end
 
 ---@param go UnityEngine.GameObject
 ---@return ListView
 function GetListView(go)
     return go:GetCom(ListView)
+end
+
+---@param go UnityEngine.GameObject
+---@return UnityEngine.Animator
+function GetAnimator(go)
+    return go:GetCom(Animator)
 end

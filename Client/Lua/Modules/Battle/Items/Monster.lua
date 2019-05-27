@@ -4,23 +4,25 @@
 --- DateTime: 2019/5/21 22:58
 ---
 
+local MonsterBehavior = require("Game.Modules.Battle.Behaviors.MonsterBehavior")
 local Avatar = require('Game.Modules.Battle.Items.Avatar')
 
 ---@class Game.Modules.Battle.Items.Monster : Game.Modules.Battle.Items.Avatar
 ---@param monsterInfo MonsterInfo
 ---@param behavior Game.Modules.Battle.Behaviors.MonsterBehavior
-local Monster = class("Game.Modules.Battle.Items.Hero",Avatar)
+local Monster = class("Game.Modules.Battle.Items.Monster",Avatar)
 
 ---@param monsterInfo MonsterInfo
 function Monster:Ctor(monsterInfo)
-    Monster.super.Ctor(self, monsterInfo)
     self.monsterInfo = monsterInfo
+    Monster.super.Ctor(self, monsterInfo)
 end
 
 function Monster:OnLoadedRenderObj()
     Monster.super.OnLoadedRenderObj(self)
     --self.behavior = MainHeroBehavior.New(self.gameObject)
     --self:SetRenderObjVisible(false)
+    self:PlayIdle()
 end
 
 
@@ -30,8 +32,8 @@ function Monster:SetBehaviorEnable(enable)
         self.behavior:Dispose()
     end
     if enable then
-        self.behavior = MainHeroBehavior.New(self.gameObject)
-        self.behavior:Start()
+        self.behavior = MonsterBehavior.New(self)
+        self.behavior:Run()
     end
 end
 

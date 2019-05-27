@@ -28,6 +28,9 @@ function BattleMdr:OnInit()
         self.points[i] = pointsObj:FindChild("p" .. i).transform.position
     end
     World.points = self.points
+    local aStarObj = vmgr.scene.currSubScene:GetRootObjByName("A*")
+    World.grid = aStarObj:GetComponent(typeof(AStar.Grid))
+
 
     self.mainHero = MainHero.New(AvatarConfig.Get("TestHero"))
     self.mainHero.transform.position = self.points[1]
@@ -37,17 +40,16 @@ function BattleMdr:OnInit()
 
     local battleInfo = require("Game.Config.Excel.Battle_Test") ---@type BattleInfo
 
-    self.battleBehavior = BattleBehavior.New(battleInfo, self.points)
+    self.battleBehavior = BattleBehavior.New(battleInfo)
     self.battleBehavior:CreateBattle()
 
     self:StartBattle()
 end
 
 function BattleMdr:StartBattle()
-    self:StartCoroutine(function()
-        coroutine.wait(1)
+    DelayCallback(1, Handler.New(function()
         self.mainHero:SetBehaviorEnable(true)
-    end)
+    end, self))
 end
 
 return BattleMdr

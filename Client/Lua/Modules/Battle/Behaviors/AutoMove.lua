@@ -14,13 +14,14 @@ local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 ---@field overCallback Handler
 ---@field stepCallback Handler
 ---@field pathQueue List
+---@field lastDistance number 上一次距离目标点距离
 local AutoMove = class("Game.Modules.Battle.Behaviors.AutoMove",BaseBehavior)
 
 ---@param avatar Game.Modules.Battle.Items.Avatar
 function AutoMove:Ctor(avatar)
     AutoMove.super.Ctor(self, avatar.gameObject)
     self.avatar = avatar
-    self.delta = FrameTime * self.avatar.avatarInfo.moveSpeed
+    self.delta = FRAME_TIME * self.avatar.avatarInfo.moveSpeed
 
     self.aStar = AStar.PathRequestManager
     local aStarObj = vmgr.scene.currSubScene:GetRootObjByName("A*")
@@ -28,30 +29,52 @@ function AutoMove:Ctor(avatar)
     self.waves = {}
 end
 
-function AutoMove:StartMove(destPos, overCallback, stepCallback)
+function AutoMove:SmoothMove(destPos, overCallback, stepCallback)
+    self:DoPathFound(destPos, true, overCallback, stepCallback)
+end
+
+function AutoMove:Move(destPos, overCallback, stepCallback)
+    self:DoPathFound(destPos, false, overCallback, stepCallback)
+end
+
+function AutoMove:MoveDirect(destPos, overCallback, stepCallback)
+    self.destPos = destPos
+    self.overCallback = overCallback
+    self.stepCallback = stepCallback
+    self.pathQueue = List.New(destPos)
+    --self.pathQueue:UnShift(self.avatar.transform.position)
+    if self.pathQueue:Size() == 1 then
+        if self.overCallback then
+            self.overCallback:Execute(true)
+        end
+    else
+        AddEventListener(Event.Update, self.Update, self)
+    end
+end
+
+function AutoMove:DoPathFound(destPos, smooth, overCallback, stepCallback)
     self.destPos = destPos
     self.overCallback = overCallback
     self.stepCallback = stepCallback
     if self:IsArrive(destPos) then
-        self.aStar.RequestPath(self.avatar.transform.position, destPos, 5, 10,function(path)
+        if self.overCallback then
+            self.overCallback:Execute(true)
+        end
+    else
+        self.aStar.RequestPath(self.avatar.transform.position, destPos, 5, 10, smooth,function(path)
             self:OnPathFound(path)
         end,function()
             if self.overCallback then
                 self.overCallback:Execute(false)
             end
         end)
-    else
-        if self.overCallback then
-            self.overCallback:Execute(true)
-        end
     end
 end
-
 
 ---@param path AStar.Path
 function AutoMove:OnPathFound(path)
     self.pathQueue = List.New(Tools.ToLuaArray(path.lookPoints))
-    self.pathQueue:UnShift(self.avatar.transform.position)
+    --self.pathQueue:UnShift(self.avatar.transform.position)
     if self.pathQueue:Size() == 1 then
         if self.overCallback then
             self.overCallback:Execute(true)
@@ -62,35 +85,45 @@ function AutoMove:OnPathFound(path)
 end
 
 function AutoMove:Update()
-    if not isNull(self.gameObject) then
+    if isNull(self.gameObject) then
         return
     end
     local nextPos = self.pathQueue:Peek()
     if not self:IsArrive(nextPos) then
         self.avatar.transform.forward = (nextPos - self.avatar.transform.position).normalized
-        self.avatar.transform.position = self.avatar.transform.position + self.avatar.transform.forward * self.delta
+        self.avatar.transform.position = Vector3.MoveTowards(self.avatar.transform.position, nextPos, self.delta)
+        self.avatar:UpdateGridNode()
     else
         self:NextPos()
     end
 end
 
 function AutoMove:NextPos()
-    local currPos = self.pathQueue:Shift()
-    local nextPos = self.pathQueue:Peek()
-    self.avatar.transform.forward = (nextPos - currPos).normalized
     if self.pathQueue:Size() == 1 then
-        self:Stop()
         if self.overCallback then
             self.overCallback:Execute(true)
         end
+        self.avatar.transform.position = self.pathQueue:Shift()
+        self:Stop()
+    else
+        local currPos = self.pathQueue[1]
+        local nextPos = self.pathQueue[2]
+        self.pathQueue:Shift()
+        self.avatar.transform.forward = (nextPos - currPos).normalized
     end
 end
 
----@param path AStar.Path
+---@param nextPos UnityEngine.Vector3
 function AutoMove:IsArrive(nextPos)
-    local currNode = self.grid:NodeFromWorldPoint(self.avatar.transform.position)
-    local nextNode = self.grid:NodeFromWorldPoint(nextPos)
-    if currNode.worldPosition == nextNode.worldPosition then
+    --local currNode = self.grid:NodeFromWorldPoint(self.avatar.transform.position)
+    --local nextNode = self.grid:NodeFromWorldPoint(nextPos)
+    --if currNode.worldPosition == nextNode.worldPosition then
+    --    return true
+    --else
+    --    return false
+    --end
+    local distance = Vector3.Distance(self.avatar.transform.position, nextPos)
+    if distance < self.delta then
         return true
     else
         return false
@@ -98,7 +131,9 @@ function AutoMove:IsArrive(nextPos)
 end
 
 function AutoMove:Stop()
-    RemoveEventListener(Event.Update, self.Update)
+    self.overCallback = nil
+    self.stepCallback = nil
+    RemoveEventListener(Event.Update, self.Update, self)
 end
 
 function AutoMove:Dispose()

@@ -13,6 +13,7 @@ local LuaMonoBehaviour = require('Betel.LuaMonoBehaviour')
 ---@field attach boolean
 local AttachCamera = class("Game.Modules.Common.Camera.AttachCamera",LuaMonoBehaviour)
 
+local Speed = 4.4
 ---@param camera UnityEngine.Camera
 function AttachCamera:Ctor(camera)
     AttachCamera.super.Ctor(self, camera.gameObject)
@@ -34,7 +35,7 @@ end
 function AttachCamera:Update()
     if self.attach then
         if self.target then
-            self.camera.transform.position = Vector3.Lerp(self.camera.transform.position,self.target.transform.position + self.offset, Time.deltaTime)
+            self.camera.transform.position = Vector3.Lerp(self.camera.transform.position,self.target.transform.position + self.offset, Time.deltaTime * Speed)
         end
     end
 end

@@ -8,6 +8,7 @@
 ---@class SceneItemInfo
 ---@field id string|number
 ---@field prefabUrl string
+---@field scale string
 
 --技能
 ---@class SkillInfo
@@ -69,6 +70,8 @@
 
 ---@class AreaInfo
 ---@field bornPos number
+---@field rangeX number
+---@field rangeY number
 ---@field waves table<number, WaveInfo>
 
 ---@class WaveInfo

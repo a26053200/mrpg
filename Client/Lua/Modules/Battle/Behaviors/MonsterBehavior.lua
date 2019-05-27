@@ -9,30 +9,64 @@ local AvatarBehavior = require('Game.Modules.Battle.Behaviors.AvatarBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.MonsterBehavior : Game.Modules.Battle.Behaviors.AvatarBehavior
 ---@field New fun() : Game.Modules.Battle.Behaviors.MonsterBehavior
----@field hero Game.Modules.Battle.Items.Hero
+---@field monster Game.Modules.Battle.Items.Monster
 local MonsterBehavior = class("Game.Modules.Battle.Behaviors.MonsterBehavior",AvatarBehavior)
 
----@param hero Game.Modules.Battle.Items.Hero
-function MonsterBehavior:Ctor(hero)
-    MonsterBehavior.super.Ctor(self, hero)
-    self.hero = hero
-    local s_id = 1
-    self:AppendState(function()
-        coroutine.start(function()
-            coroutine.wait(1)
-            print("s_id:" .. s_id)
-            self:NextState()
-        end)
-    end)
-    self:AppendState(function()
-        coroutine.start(function()
-            coroutine.wait(1)
-            print("AvatarBehavior is over s_id:" .. s_id)
-            s_id = s_id + 1
-            self:NextState()
-        end)
-    end)
+---@param monster Game.Modules.Battle.Items.Monster
+function MonsterBehavior:Ctor(monster)
+    MonsterBehavior.super.Ctor(self, monster)
+    self.monster = monster
+
+    self:AppendBehavior(self:RandomPatrol())
 end
+
+---@param node StateNode
+function MonsterBehavior:Run()
+    MonsterBehavior.super.Run(self)
+    self.currArea = World.battleBehavior:GetCurrArea()
+end
+
+--随机巡逻
+function MonsterBehavior:RandomPatrol()
+    local behavior = BaseBehavior.New()
+
+    behavior:AppendState(Handler.New(self.DoRandomPatrol, self, behavior))
+
+    return behavior
+end
+
+function MonsterBehavior:DoRandomPatrol(behavior)
+    self:Debug("MonsterBehavior:DoRandomPatrol")
+    self.currArea:GetReachableGrid(self.monster.node, Handler.New(function(soonNode)
+        self.monster.soonNode = soonNode
+        self.monster:PlayRun()
+        self.autoMove:MoveDirect(soonNode.worldPosition, Handler.New(self.OnPatrolMoveEnd,self, behavior))
+    end))
+end
+
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+function MonsterBehavior:OnPatrolMoveEnd(behavior)
+    self:Debug("MonsterBehavior:OnPatrolMoveEnd")
+    self.monster:PlayIdle()
+    behavior:NextState()
+end
+
+--移动到刷怪区域
+function MonsterBehavior:MoveToTarget()
+    local behavior = BaseBehavior.New()
+
+    behavior:AppendState(Handler.New(self.DoMoveToArea, self))
+
+    return behavior
+end
+
+function MonsterBehavior:DoMoveToTarget()
+    self:Debug("MainHeroBehavior:DoMoveToArea")
+    local tagPos = World.points[self.currArea.areaInfo.bornPos]
+    self.hero:PlayRun()
+    self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveEnd,self))
+end
+
 
 function MonsterBehavior:Dispose()
     MonsterBehavior.super.Dispose(self)

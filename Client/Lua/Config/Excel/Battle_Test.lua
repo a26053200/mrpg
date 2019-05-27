@@ -28,6 +28,8 @@ local data = {
         [1] =
         {
             bornPos = 2,
+            rangeX = 3,
+            rangeY = 6,
             waves = {
                 [1] =
                 {
@@ -58,6 +60,8 @@ local data = {
         [2] =
         {
             bornPos = 3,
+            rangeX = 3,
+            rangeY = 6,
             waves = {
                 [1] =
                 {

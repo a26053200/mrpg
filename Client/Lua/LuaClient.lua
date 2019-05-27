@@ -8,6 +8,7 @@ local LuaClient = {}
 
 
 function LuaClient.Start()
+
     LuaClient.RequireGlobalDefines()
 
     LuaClient.GameStart()

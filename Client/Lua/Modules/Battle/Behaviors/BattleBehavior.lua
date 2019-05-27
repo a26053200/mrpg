@@ -19,7 +19,6 @@ local BattleBehavior = class("Game.Modules.Battle.Behaviors.BattleBehavior",Base
 function BattleBehavior:Ctor(battleInfo, points)
     BattleBehavior.super.Ctor(self)
     self.battleInfo = battleInfo
-    self.points = points
     self.bornAreas = List.New()
 
     World.battleBehavior = self
@@ -28,7 +27,7 @@ end
 --初始化战场
 function BattleBehavior:CreateBattle()
     for i = 1, #self.battleInfo.areas do
-        local area = BornArea.New(self.battleInfo.areas[i], self.points)
+        local area = BornArea.New(self.battleInfo.areas[i])
         self.bornAreas:Push(area)
         area:Refresh()
     end

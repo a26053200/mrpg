@@ -11,12 +11,13 @@ AvatarConfig.data = {
     HeroTemplate = {
         name = "HeroTemplate",
         prefabUrl = "",
-        moveSpeed = 1,
+        moveSpeed = 5,
+        scale = 1,
         animBorn = "",
-        animIdle = "",
+        animIdle = "Idle",
         animAtkIdle = "",
         animWalk = "",
-        animRun = "",
+        animRun = "Run",
         baseAttr = {
             hpMax = 1000,
             hpMin = 1000,
@@ -27,12 +28,63 @@ AvatarConfig.data = {
             critMax = 0.2,
             critMin = 0.3,
         },
-        skills = nil,
+        skills =
+        {
+            [1] =
+            {
+                animName = "Attack",
+                accounts =
+                {
+                    [1] = {
+                        delay = 0.5,
+                        baseAttr = {
+                            atkMax = 5,
+                            atkMin = 10,
+                            critMax = 0.2,
+                            critMin = 0.3,
+                        },
+                    }
+                },
+            },
+            [2] =
+            {
+                animName = "Attack01",
+                accounts =
+                {
+                    [1] = {
+                        delay = 0.5,
+                        baseAttr = {
+                            atkMax = 5,
+                            atkMin = 10,
+                            critMax = 0.2,
+                            critMin = 0.3,
+                        },
+                    }
+                },
+            },
+            [3] =
+            {
+                animName = "Attack02",
+                accounts =
+                {
+                    [1] = {
+                        delay = 0.5,
+                        baseAttr = {
+                            atkMax = 5,
+                            atkMin = 10,
+                            critMax = 0.2,
+                            critMin = 0.3,
+                        },
+                    }
+                },
+            }
+        }
     },
     MonsterTemplate = {
         name = "MonsterTemplate",
         prefabUrl = "",
         moveSpeed = 1,
+        scale = 1,
         animBorn = "",
         animIdle = "",
         animAtkIdle = "",
@@ -77,6 +129,7 @@ t.prefabUrl = "Models/villarger_B_Boy/Prefabs/Villager_B_Boy.prefab"
 
 t = AvatarConfig.CreateMonster("Dragon")
 t.prefabUrl = "Models/Dragon/Prefabs/micro_dragon.prefab"
+t.scale = 0.4
 t.animBorn = "dragon_land_on_ground"
 t.animIdle = "dragon_idle"
 t.animRun = "dragon_take_off"
@@ -103,6 +156,7 @@ t.skills =
 
 t = AvatarConfig.CreateMonster("Ghost")
 t.prefabUrl = "Models/Ghost/Prefabs/micro_ghost.prefab"
+t.scale = 0.4
 t.animBorn = "ghost_rise_from_floor"
 t.animIdle = "ghost_idle_hover"
 t.animRun = "ghost_idle_back_and_forth"
@@ -129,6 +183,7 @@ t.skills =
 
 t = AvatarConfig.CreateMonster("Werewolf")
 t.prefabUrl = "Models/Werewolf/Prefabs/micro_werewolf.prefab"
+t.scale = 0.4
 t.animBorn = "wolf_getup"
 t.animIdle = "wolf_idle1"
 t.animRun = "wolf_walk"

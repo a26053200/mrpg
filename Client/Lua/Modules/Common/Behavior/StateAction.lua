@@ -44,7 +44,7 @@ function StateAction:CanExecute()
 end
 
 function StateAction:IsOver()
-    if self.duration then
+    if self.node.duration then
         return Time.time - self.startTime > self.duration
     else
         return false

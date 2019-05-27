@@ -23,14 +23,15 @@ function RenderItem:LoadRenderObj()
     end
 end
 
+function RenderItem:OnLoadedRenderObj()
+    self.renderObj.transform.localScale = Vector3.one * self.sceneItemInfo.scale
+end
+
 ---@param visible boolean
 function RenderItem:SetRenderObjVisible(visible)
     self.renderObj:SetActive(visible)
 end
 
-function RenderItem:OnLoadedRenderObj()
-
-end
 
 function RenderItem:Dispose()
     RenderItem.super.Dispose(self)

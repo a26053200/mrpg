@@ -9,7 +9,7 @@ local StateMachine = require("Game.Modules.Common.Behavior.StateMachine")
 local LuaMonoBehaviour = require("Betel.LuaMonoBehaviour")
 
 ---@class Game.Modules.Common.Behavior.BaseBehavior : Betel.LuaMonoBehaviour
----@field New function<selectable:boolean>
+---@field New fun() : Game.Modules.Common.Behavior.BaseBehavior
 ---@field stateMachine Game.Modules.Common.Behavior.StateMachine
 ---@field lastBehavior Game.Modules.Common.Behavior.BaseBehavior
 local BaseBehavior = class("Game.Modules.Common.Behavior.BaseBehavior",LuaMonoBehaviour)
@@ -24,7 +24,7 @@ end
 function BaseBehavior:AppendState(OnStateEnter, name)
     local node = {} ---@type StateNode
     node.name = name
-    node.OnEnter = Handler.New(OnStateEnter, self)
+    node.OnEnter = OnStateEnter
     self:AppendStateNode(node)
 end
 
@@ -33,11 +33,7 @@ function BaseBehavior:AppendBehavior(behavior, name)
     local node = {} ---@type StateNode
     node.name = name
     node.OnEnter = Handler.New(function()
-        if self.lastBehavior then
-            self.lastBehavior:Stop()
-        end
         behavior:Run()
-        self.lastBehavior = behavior
     end, self)
     self:AppendStateNode(node)
 end
@@ -63,7 +59,7 @@ function BaseBehavior:NextState()
 end
 
 function BaseBehavior:Debug(msg)
-    print(msg)
+    print("<color=#FFFF00FF> [Behavior] </color>" .. msg)
 end
 
 ---@param node StateNode

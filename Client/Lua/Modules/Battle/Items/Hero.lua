@@ -13,8 +13,8 @@ local Hero = class("Game.Modules.Battle.Items.Hero",Avatar)
 
 ---@param heroInfo HeroInfo
 function Hero:Ctor(heroInfo)
-    Hero.super.Ctor(self, heroInfo)
     self.heroInfo = heroInfo
+    Hero.super.Ctor(self, heroInfo)
 end
 
 function Hero:Dispose()

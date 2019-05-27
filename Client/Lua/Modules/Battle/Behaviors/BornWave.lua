@@ -23,6 +23,11 @@ function BornWave:Ctor(areaInfo, waveInfo, points)
     self.waveInfo = waveInfo
     self.points = points
     self.monsterList = {}
+    AddEventListener(Event.Update, self.Update, self)
+end
+
+function BornWave:Update()
+
 end
 
 function BornWave:Refresh()
@@ -49,9 +54,9 @@ function BornWave:DoRefresh()
         for n = 1, num do
             local monster = Monster.New(AvatarConfig.Clone(bornInfo.avatarName))
             self.monsterList[count] = monster
-            local rx = math.random(-1.0,1.0)
-            local rz = math.random(-1.0,1.0)
-            monster.transform.position = self.points[self.areaInfo.bornPos] + Vector3.New(rx, self.points[self.areaInfo.bornPos].y,rz)
+            monster.transform.position = self.points[count]
+            monster:UpdateGridNode()
+            monster.soonNode = monster.node
             count = count + 1
         end
     end

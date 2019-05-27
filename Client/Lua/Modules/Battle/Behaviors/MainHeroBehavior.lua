@@ -9,7 +9,6 @@ local HeroBehavior = require('Game.Modules.Battle.Behaviors.HeroBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.MainHeroBehavior : Game.Modules.Battle.Behaviors.HeroBehavior
 ---@field New fun() : Game.Modules.Battle.Behaviors.MainHeroBehavior
----@field currArea Game.Modules.Battle.Behaviors.BornArea
 local MainHeroBehavior = class("Game.Modules.Battle.Behaviors.MainHeroBehavior",HeroBehavior)
 
 ---@param hero Game.Modules.Battle.Items.MainHero
@@ -18,7 +17,7 @@ function MainHeroBehavior:Ctor(hero)
 
     self:AppendBehavior(self:EnterArea())
     self:AppendBehavior(self:MoveToArea())
-
+    self:AppendBehavior(self:AttackUntilTargetDead())
 end
 
 ---@param node StateNode
@@ -32,7 +31,8 @@ function MainHeroBehavior:EnterArea()
 
     behavior:AppendState(Handler.New(function()
         self.currArea = World.battleBehavior:GetCurrArea()
-    end , self))
+        self:NextState()
+    end, self))
 
     return behavior
 end
@@ -47,13 +47,33 @@ function MainHeroBehavior:MoveToArea()
 end
 
 function MainHeroBehavior:DoMoveToArea()
-    print("MainHeroBehavior:DoMoveToArea")
+    self:Debug("MainHeroBehavior:DoMoveToArea")
     local tagPos = World.points[self.currArea.areaInfo.bornPos]
-    self.autoMove:StartMove(tagPos, Handler.New(self.OnMoveEnd,self))
+    self.hero:PlayRun()
+    self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveEnd,self))
 end
 
 function MainHeroBehavior:OnMoveEnd()
+    self:Debug("MainHeroBehavior:OnMoveEnd")
+    self.hero:PlayIdle()
     self:NextState()
+end
+
+--攻击单个目标知道目标死亡
+function MainHeroBehavior:AttackUntilTargetDead()
+    local behavior = BaseBehavior.New()
+
+    local skills = self.hero.heroInfo.skills
+
+    self:AppendSkill(behavior, skills[1])
+    self:AppendSkill(behavior, skills[2])
+    self:AppendSkill(behavior, skills[3])
+
+    return behavior
+end
+
+function MainHeroBehavior:NextState()
+    MainHeroBehavior.super.NextState(self)
 end
 
 function MainHeroBehavior:Dispose()

@@ -8,18 +8,45 @@ local AutoMove = require('Game.Modules.Battle.Behaviors.AutoMove')
 local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.AvatarBehavior : Game.Modules.Common.Behavior.BaseBehavior
----@field owner Game.Modules.Battle.Items.Avatar
+---@field avatar Game.Modules.Battle.Items.Avatar
 ---@field autoMove Game.Modules.Battle.Behaviors.AutoMove
+---@field currArea Game.Modules.Battle.Behaviors.BornArea
 local AvatarBehavior = class("Game.Modules.Battle.Behaviors.AvatarBehavior",BaseBehavior)
 
 local s_id = 1
 
 ---@param owner Game.Modules.Battle.Items.Avatar
-function AvatarBehavior:Ctor(owner)
+function AvatarBehavior:Ctor(avatar)
     s_id = s_id + 1
     AvatarBehavior.super.Ctor(self)
-    self.owner = owner
-    self.autoMove = AutoMove.New(self.owner)
+    self.avatar = avatar
+    self.autoMove = AutoMove.New(self.avatar)
+end
+
+
+function AvatarBehavior:SearchTarget()
+
+end
+
+--共计单个目标知道目标死亡
+function AvatarBehavior:AttackUntilTargetDead()
+
+end
+
+--接技能
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+---@param skillInfo SkillInfo
+function AvatarBehavior:AppendSkill(behavior, skillInfo)
+    behavior:AppendState(Handler.New(function()
+        --self:Debug("skillInfo.animName:" .. skillInfo.animName)
+        self.avatar.animCtrl:PlayAnim(skillInfo.animName, Handler.New(self.OnSkillEnd, self, behavior, skillInfo))
+    end, self))
+end
+
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+---@param skillInfo SkillInfo
+function AvatarBehavior:OnSkillEnd(behavior, skillInfo)
+    behavior:NextState()
 end
 
 function AvatarBehavior:Dispose()

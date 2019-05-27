@@ -16,7 +16,8 @@ function BattleScene:Ctor(sceneInfo, unityScene)
 end
 
 function BattleScene:OnEnterScene()
-    self:LoadSubLevel(1,function()
+    self:LoadSubLevel(1,function(subScene)
+        World.battleSubScene = subScene
         vmgr:LoadView(ViewConfig.Battle)
     end)
 

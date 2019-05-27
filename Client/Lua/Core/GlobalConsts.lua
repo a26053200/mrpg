@@ -24,9 +24,10 @@ ServerName.GameServer = "GameServer"
 --- 常量
 ---===============
 --目标帧率
+Application.targetFrameRate = 60
 FrameRate = Application.targetFrameRate
 --目标帧间隔时间
-FrameTime = 1 / FrameRate
+FRAME_TIME = 1 / FrameRate
 
 ---===============
 --- 枚举

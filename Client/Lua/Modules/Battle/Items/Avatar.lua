@@ -4,17 +4,45 @@
 --- DateTime: 2019/5/21 22:49
 ---
 
+local AnimController = require("Game.Modules.Common.Components.AnimController")
 local RenderItem = require('Game.Modules.Battle.Items.RenderItem')
 
 ---@class Game.Modules.Battle.Items.Avatar : Game.Modules.Battle.Items.RenderItem
 ---@field avatarInfo AvatarInfo
----@param behavior Game.Modules.Battle.Behaviors.AvatarBehavior
+---@field behavior Game.Modules.Battle.Behaviors.AvatarBehavior
+---@field node AStar.Grid
+---@field soonNode AStar.Grid 即将拥有的
 local Avatar = class("Game.Modules.Battle.Items.Avatar",RenderItem)
 
 ---@param avatarInfo AvatarInfo
 function Avatar:Ctor(avatarInfo)
-    Avatar.super.Ctor(self, avatarInfo)
     self.avatarInfo = avatarInfo
+    Avatar.super.Ctor(self, avatarInfo)
+end
+
+function Avatar:OnLoadedRenderObj()
+    Avatar.super.OnLoadedRenderObj(self)
+    self.animCtrl = AnimController.New(self)
+end
+
+--更新所在格子
+function Avatar:UpdateGridNode()
+    self.node = World.grid:NodeFromWorldPoint(self.transform.position)
+end
+
+---@param callback Handler
+function Avatar:PlayIdle(callback)
+    self.animCtrl:PlayAnim(self.avatarInfo.animIdle, callback)
+end
+
+---@param callback Handler
+function Avatar:PlayRun(callback)
+    self.animCtrl:PlayAnim(self.avatarInfo.animRun, callback)
+end
+
+---@param callback Handler
+function Avatar:PlayDead(callback)
+    self.animCtrl:PlayAnim(self.avatarInfo.animDead, callback)
 end
 
 ---@param enable boolean
@@ -24,6 +52,9 @@ end
 
 function Avatar:Dispose()
     Avatar.super.Dispose(self)
+    if self.animCtrl then
+        self.animCtrl:Dispose()
+    end
 end
 
 return Avatar

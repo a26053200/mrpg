@@ -33,7 +33,7 @@ function StateMachine:Run(cycleOverCallback)
     self.cycleOverCallback = cycleOverCallback
     self.currState = nil
     self.curr2DList = self.state2DList:Clone()
-    log("StateMachine:Run " .. s_id)
+    --log("StateMachine:Run " .. s_id)
     AddEventListener(Event.Update, self.Update, self)
     self:NextState()
 end
@@ -90,9 +90,11 @@ function StateMachine:Update()
     if self.currState then
         local state = self.currState
         local isOver = state:IsOver()
-        if not state.execute and state.node.OnEnter ~= nil then
+        if not state.execute then
             state.execute = true
-            state.node.OnEnter:Execute(state)
+            if state.node.OnEnter ~= nil then
+                state.node.OnEnter:Execute(state)
+            end
         end
         if isOver then
             self:NextState()
