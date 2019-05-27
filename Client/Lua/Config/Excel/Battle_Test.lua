@@ -38,21 +38,21 @@ local data = {
                         [1] =
                         {
                             avatarName = "Dragon",
-                            minNum = 2,
-                            maxNum = 3,
+                            minNum = 1,
+                            maxNum = 1,
                         },
-                        [2] =
-                        {
-                            avatarName = "Ghost",
-                            minNum = 2,
-                            maxNum = 3,
-                        },
-                        [3] =
-                        {
-                            avatarName = "Werewolf",
-                            minNum = 2,
-                            maxNum = 3,
-                        },
+                        --[2] =
+                        --{
+                        --    avatarName = "Ghost",
+                        --    minNum = 2,
+                        --    maxNum = 3,
+                        --},
+                        --[3] =
+                        --{
+                        --    avatarName = "Werewolf",
+                        --    minNum = 2,
+                        --    maxNum = 3,
+                        --},
                     },
                 },
             },

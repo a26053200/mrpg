@@ -37,22 +37,12 @@ end
 
 --获取可以到达的格子
 ---@param src Game.Modules.Battle.Items.Monster
-function BornArea:GetReachableGrid(src, callback)
-    local soonGrid = Tools3D.GetRandomNeighboursNode(self.areaRect, src)
+function BornArea:GetReachableNode(src)
+    local soonGrid = Tools3D.GetRandomNeighboursNode(World.grid, src)
     if soonGrid ~= nil and self:isEmptyGrid(soonGrid) then
-        if callback then
-            callback:Execute(soonGrid)
-        end
+        return soonGrid
     else
-        self:StartCoroutine(function()
-            while soonGrid == nil or not self:isEmptyGrid(soonGrid) do
-                coroutine.step(1)
-                soonGrid = Tools3D.GetRandomNeighboursNode(self.areaRect, src)
-            end
-            if callback then
-                callback:Execute(soonGrid)
-            end
-        end)
+        return nil
     end
 end
 
@@ -63,7 +53,7 @@ function BornArea:isEmptyGrid(node)
         local wave = self.waves[i]
         for j = 1, #wave.monsterList do
             local monster = wave.monsterList[j]
-            if Tools3D.EqualGrid(monster.node, node) or Tools3D.EqualGrid(monster.soonNode, node) then
+            if Tools3D.isEqualNode(monster.node, node) or Tools3D.isEqualNode(monster.soonNode, node) then
                 return false
             end
         end

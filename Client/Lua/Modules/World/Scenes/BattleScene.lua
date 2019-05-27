@@ -16,11 +16,25 @@ function BattleScene:Ctor(sceneInfo, unityScene)
 end
 
 function BattleScene:OnEnterScene()
-    self:LoadSubLevel(1,function(subScene)
-        World.battleSubScene = subScene
-        vmgr:LoadView(ViewConfig.Battle)
-    end)
+    --self:LoadSubLevel(1,function(subScene)
+    --    World.battleSubScene = subScene
+    --    vmgr:LoadView(ViewConfig.Battle)
+    --end)
 
+    local go = GameObject.New("TestFastBehavior")
+    local sm = go:AddComponent(typeof(FastBehavior.StateMachine))
+    local bb = BaseBehavior.New(sm)
+
+    bb:AppendState(function()
+        print("TestFastBehavior start")
+        bb:NextState()
+    end, "test")
+    bb:AppendInterval(2)
+    bb:AppendState(function()
+        print("TestFastBehavior end")
+        bb:NextState()
+    end, "test")
+    bb:Run()
     --vmgr:LoadView(ViewConfig.NewbieWelcome)
 end
 

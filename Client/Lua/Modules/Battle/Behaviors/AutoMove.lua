@@ -41,15 +41,9 @@ function AutoMove:MoveDirect(destPos, overCallback, stepCallback)
     self.destPos = destPos
     self.overCallback = overCallback
     self.stepCallback = stepCallback
-    self.pathQueue = List.New(destPos)
-    --self.pathQueue:UnShift(self.avatar.transform.position)
-    if self.pathQueue:Size() == 1 then
-        if self.overCallback then
-            self.overCallback:Execute(true)
-        end
-    else
-        AddEventListener(Event.Update, self.Update, self)
-    end
+    self.pathQueue = List.New()
+    self.pathQueue:UnShift(destPos)
+    AddEventListener(Event.Update, self.Update, self)
 end
 
 function AutoMove:DoPathFound(destPos, smooth, overCallback, stepCallback)
@@ -104,6 +98,7 @@ function AutoMove:NextPos()
             self.overCallback:Execute(true)
         end
         self.avatar.transform.position = self.pathQueue:Shift()
+        self.avatar:UpdateGridNode()
         self:Stop()
     else
         local currPos = self.pathQueue[1]

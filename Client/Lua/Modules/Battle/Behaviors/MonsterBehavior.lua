@@ -24,6 +24,7 @@ end
 function MonsterBehavior:Run()
     MonsterBehavior.super.Run(self)
     self.currArea = World.battleBehavior:GetCurrArea()
+    self:Debug("MonsterBehavior:Run")
 end
 
 --随机巡逻
@@ -36,19 +37,24 @@ function MonsterBehavior:RandomPatrol()
 end
 
 function MonsterBehavior:DoRandomPatrol(behavior)
-    self:Debug("MonsterBehavior:DoRandomPatrol")
-    self.currArea:GetReachableGrid(self.monster.node, Handler.New(function(soonNode)
+    local soonNode = self.currArea:GetReachableNode(self.monster.node)
+    if soonNode then
+        self:Debug("MonsterBehavior:DoRandomPatrol")
         self.monster.soonNode = soonNode
         self.monster:PlayRun()
         self.autoMove:MoveDirect(soonNode.worldPosition, Handler.New(self.OnPatrolMoveEnd,self, behavior))
-    end))
+    else
+        self:Debug("Not MonsterBehavior DoRandomPatrol")
+        self:NextState()
+    end
 end
 
 ---@param behavior Game.Modules.Common.Behavior.BaseBehavior
 function MonsterBehavior:OnPatrolMoveEnd(behavior)
     self:Debug("MonsterBehavior:OnPatrolMoveEnd")
+    self.monster:UpdateGridNode()
     self.monster:PlayIdle()
-    behavior:NextState()
+    self:NextState()
 end
 
 --移动到刷怪区域

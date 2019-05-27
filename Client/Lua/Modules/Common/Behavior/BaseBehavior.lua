@@ -59,7 +59,7 @@ function BaseBehavior:NextState()
 end
 
 function BaseBehavior:Debug(msg)
-    print("<color=#FFFF00FF> [Behavior] </color>" .. msg)
+    print(string.format("<color=#FFFF00FF> [Behavior-%s] </color>%s",self.stateMachine.id, msg))
 end
 
 ---@param node StateNode
