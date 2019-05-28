@@ -16,26 +16,55 @@ function BattleScene:Ctor(sceneInfo, unityScene)
 end
 
 function BattleScene:OnEnterScene()
-    --self:LoadSubLevel(1,function(subScene)
-    --    World.battleSubScene = subScene
-    --    vmgr:LoadView(ViewConfig.Battle)
-    --end)
+    self:LoadSubLevel(1,function(subScene)
+        World.battleSubScene = subScene
+        vmgr:LoadView(ViewConfig.Battle)
+    end)
 
-    local go = GameObject.New("TestFastBehavior")
-    local sm = go:AddComponent(typeof(FastBehavior.StateMachine))
-    local bb = BaseBehavior.New(sm)
-
+    --[[
+    self.bbObj = GameObject.New("TestFastBehavior")
+    local sm = self.bbObj:AddComponent(typeof(FastBehavior.StateMachine))
+    local bb = FastLuaBehavior.New(sm) ---@type FastBehavior.FastLuaBehavior
+    self.bb = bb
     bb:AppendState(function()
-        print("TestFastBehavior start")
-        bb:NextState()
+        self:StartCoroutine(function()
+            coroutine.wait(1)
+            print("TestFastBehavior start")
+            bb:NextState()
+        end)
+
     end, "test")
     bb:AppendInterval(2)
     bb:AppendState(function()
-        print("TestFastBehavior end")
+        self:StartCoroutine(function()
+            coroutine.wait(1)
+            print("TestFastBehavior end")
+            bb:NextState()
+        end)
         bb:NextState()
     end, "test")
+
+    bb:AppendBehavior(self:SubBB())
     bb:Run()
+    --]]
     --vmgr:LoadView(ViewConfig.NewbieWelcome)
+end
+
+---@return FastBehavior.FastLuaBehavior
+function BattleScene:SubBB()
+    local sm = self.bbObj:AddComponent(typeof(FastBehavior.StateMachine))
+    local bb = FastLuaBehavior.New(sm) ---@type FastBehavior.FastLuaBehavior
+
+    bb:AppendState(function()
+        self:StartCoroutine(function()
+            coroutine.wait(1)
+            print("Sub BaseBehavior")
+            bb:Stop()
+            self.bb:NextState()
+        end)
+    end, "Sub BaseBehavior")
+
+    return bb
 end
 
 function BattleScene:OnExitScene()

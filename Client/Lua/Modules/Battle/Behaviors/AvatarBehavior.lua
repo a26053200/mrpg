@@ -15,10 +15,10 @@ local AvatarBehavior = class("Game.Modules.Battle.Behaviors.AvatarBehavior",Base
 
 local s_id = 1
 
----@param owner Game.Modules.Battle.Items.Avatar
+---@param avatar Game.Modules.Battle.Items.Avatar
 function AvatarBehavior:Ctor(avatar)
     s_id = s_id + 1
-    AvatarBehavior.super.Ctor(self)
+    AvatarBehavior.super.Ctor(self, avatar.gameObject)
     self.avatar = avatar
     self.autoMove = AutoMove.New(self.avatar)
 end

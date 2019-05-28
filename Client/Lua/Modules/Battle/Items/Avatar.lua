@@ -23,6 +23,7 @@ end
 function Avatar:OnLoadedRenderObj()
     Avatar.super.OnLoadedRenderObj(self)
     self.animCtrl = AnimController.New(self)
+    self.gameObject.name = self.avatarInfo.name
 end
 
 --更新所在格子

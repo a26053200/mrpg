@@ -14,8 +14,8 @@ local MonsterBehavior = class("Game.Modules.Battle.Behaviors.MonsterBehavior",Av
 
 ---@param monster Game.Modules.Battle.Items.Monster
 function MonsterBehavior:Ctor(monster)
-    MonsterBehavior.super.Ctor(self, monster)
     self.monster = monster
+    MonsterBehavior.super.Ctor(self, monster)
 
     self:AppendBehavior(self:RandomPatrol())
 end
@@ -29,7 +29,7 @@ end
 
 --随机巡逻
 function MonsterBehavior:RandomPatrol()
-    local behavior = BaseBehavior.New()
+    local behavior = self:CreateBehavior()
 
     behavior:AppendState(Handler.New(self.DoRandomPatrol, self, behavior))
 
@@ -59,7 +59,7 @@ end
 
 --移动到刷怪区域
 function MonsterBehavior:MoveToTarget()
-    local behavior = BaseBehavior.New()
+    local behavior = self:CreateBehavior()
 
     behavior:AppendState(Handler.New(self.DoMoveToArea, self))
 

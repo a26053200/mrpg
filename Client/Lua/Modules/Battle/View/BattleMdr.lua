@@ -40,7 +40,7 @@ function BattleMdr:OnInit()
 
     local battleInfo = require("Game.Config.Excel.Battle_Test") ---@type BattleInfo
 
-    self.battleBehavior = BattleBehavior.New(battleInfo)
+    self.battleBehavior = BattleBehavior.New(battleInfo, self.gameObject)
     self.battleBehavior:CreateBattle()
 
     self:StartBattle()

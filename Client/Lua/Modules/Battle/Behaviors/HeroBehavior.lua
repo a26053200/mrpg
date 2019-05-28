@@ -14,9 +14,8 @@ local HeroBehavior = class("Game.Modules.Battle.Behaviors.HeroBehavior",AvatarBe
 
 ---@param hero Game.Modules.Battle.Items.Hero
 function HeroBehavior:Ctor(hero)
-    HeroBehavior.super.Ctor(self, hero)
     self.hero = hero
-
+    HeroBehavior.super.Ctor(self, hero)
 end
 
 function HeroBehavior:Dispose()

@@ -27,7 +27,7 @@ end
 
 --移动到刷怪区域
 function MainHeroBehavior:EnterArea()
-    local behavior = BaseBehavior.New()
+    local behavior = self:CreateBehavior()
 
     behavior:AppendState(Handler.New(function()
         self.currArea = World.battleBehavior:GetCurrArea()
@@ -39,7 +39,7 @@ end
 
 --移动到刷怪区域
 function MainHeroBehavior:MoveToArea()
-    local behavior = BaseBehavior.New()
+    local behavior = self:CreateBehavior()
 
     behavior:AppendState(Handler.New(self.DoMoveToArea, self))
 
@@ -61,7 +61,7 @@ end
 
 --攻击单个目标知道目标死亡
 function MainHeroBehavior:AttackUntilTargetDead()
-    local behavior = BaseBehavior.New()
+    local behavior = self:CreateBehavior()
 
     local skills = self.hero.heroInfo.skills
 

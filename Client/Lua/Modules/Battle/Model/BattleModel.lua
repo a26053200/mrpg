@@ -46,6 +46,7 @@
 
 --Avatar基础属性
 ---@class AvatarInfo : SceneItemInfo
+---@field name string
 ---@field moveSpeed number
 ---@field animBorn string
 ---@field animIdle string

@@ -10,62 +10,66 @@ local LuaMonoBehaviour = require("Betel.LuaMonoBehaviour")
 
 ---@class Game.Modules.Common.Behavior.BaseBehavior : Betel.LuaMonoBehaviour
 ---@field New fun() : Game.Modules.Common.Behavior.BaseBehavior
----@field stateMachine Game.Modules.Common.Behavior.StateMachine
+---@field stateMachine FastBehavior.StateMachine
 ---@field lastBehavior Game.Modules.Common.Behavior.BaseBehavior
+---@field fastLuaBehavior FastBehavior.FastLuaBehavior
 local BaseBehavior = class("Game.Modules.Common.Behavior.BaseBehavior",LuaMonoBehaviour)
 
 ---@param gameObject UnityEngine.GameObject
 function BaseBehavior:Ctor(gameObject)
     BaseBehavior.super.Ctor(self, gameObject)
 
-    self.stateMachine = StateMachine.New()
+    if self.gameObject then
+        self.stateMachine = self.gameObject:AddComponent(typeof(FastBehavior.StateMachine))
+        self.fastLuaBehavior = FastLuaBehavior.New(self.stateMachine)
+    end
 end
 
+---@param OnStateEnter Handler
 function BaseBehavior:AppendState(OnStateEnter, name)
-    local node = {} ---@type StateNode
-    node.name = name
-    node.OnEnter = OnStateEnter
-    self:AppendStateNode(node)
+    name = name == nil and "AppendState:" .. self.fastLuaBehavior.id or name
+    self.fastLuaBehavior:AppendState(function()
+        OnStateEnter:Execute()
+    end , name)
+end
+
+---@return Game.Modules.Common.Behavior.BaseBehavior
+function BaseBehavior:CreateBehavior()
+    local behavior = BaseBehavior.New(self.gameObject)
+    return behavior
 end
 
 ---@param behavior Game.Modules.Common.Behavior.BaseBehavior
 function BaseBehavior:AppendBehavior(behavior, name)
-    local node = {} ---@type StateNode
-    node.name = name
-    node.OnEnter = Handler.New(function()
-        behavior:Run()
-    end, self)
-    self:AppendStateNode(node)
+    --name = name == nil and "AppendBehavior:" .. self.fastLuaBehavior.id or name
+    self.fastLuaBehavior:AppendBehavior(behavior.fastLuaBehavior)
 end
 
----@param node StateNode
+---@param node FastBehavior.StateNode
 function BaseBehavior:AppendStateNode(node)
-    self.stateMachine:AppendState(StateAction.New(node))
+    self.fastLuaBehavior:AppendStateNode(node)
 end
 
----@param node StateNode
 function BaseBehavior:Run()
-    self.stateMachine:Run()
+    self.fastLuaBehavior:Run()
 end
 
----@param node StateNode
 function BaseBehavior:Stop()
-    self.stateMachine:Stop()
+    self.fastLuaBehavior:Stop()
 end
 
----@param node StateNode
 function BaseBehavior:NextState()
-    self.stateMachine:NextState()
+    self.fastLuaBehavior:NextState()
 end
 
 function BaseBehavior:Debug(msg)
-    print(string.format("<color=#FFFF00FF> [Behavior-%s] </color>%s",self.stateMachine.id, msg))
+    print(string.format("<color=#FFFF00FF> [Behavior-%s] </color>%s",self.fastLuaBehavior.id, msg))
 end
 
 ---@param node StateNode
 function BaseBehavior:Dispose()
     BaseBehavior.super.Dispose(self)
-    self.stateMachine:Stop()
+    self.fastLuaBehavior:Stop()
 end
 
 return BaseBehavior

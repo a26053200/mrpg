@@ -7,8 +7,8 @@
 local Avatar = require('Game.Modules.Battle.Items.Avatar')
 
 ---@class Game.Modules.Battle.Items.Hero : Game.Modules.Battle.Items.Avatar
----@param heroInfo HeroInfo
----@param behavior Game.Modules.Battle.Behaviors.HeroBehavior
+---@field heroInfo HeroInfo
+---@field behavior Game.Modules.Battle.Behaviors.HeroBehavior
 local Hero = class("Game.Modules.Battle.Items.Hero",Avatar)
 
 ---@param heroInfo HeroInfo

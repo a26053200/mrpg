@@ -15,9 +15,9 @@ local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 local BattleBehavior = class("Game.Modules.Battle.Behaviors.BattleBehavior",BaseBehavior)
 
 ---@param battleInfo BattleInfo
----@param points Game.Modules.Battle.Behaviors.BornArea
-function BattleBehavior:Ctor(battleInfo, points)
-    BattleBehavior.super.Ctor(self)
+---@param gameObject UnityEngine.GameObject
+function BattleBehavior:Ctor(battleInfo, gameObject)
+    BattleBehavior.super.Ctor(self, gameObject)
     self.battleInfo = battleInfo
     self.bornAreas = List.New()
 
