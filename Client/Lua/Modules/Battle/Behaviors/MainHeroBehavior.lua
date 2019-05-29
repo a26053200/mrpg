@@ -15,14 +15,14 @@ local MainHeroBehavior = class("Game.Modules.Battle.Behaviors.MainHeroBehavior",
 function MainHeroBehavior:Ctor(hero)
     MainHeroBehavior.super.Ctor(self, hero)
 
-    self:AppendBehavior(self:EnterArea())
-    self:AppendBehavior(self:MoveToArea())
-    self:AppendBehavior(self:AttackUntilTargetDead())
+    self:AppendBehavior(self:EnterArea(), "MainHeroBehavior EnterArea")
+    self:AppendBehavior(self:MoveToArea(), "MainHeroBehavior MoveToArea")
+    self:AppendBehavior(self:AttackUntilTargetDead(), "MainHeroBehavior AttackUntilTargetDead")
 end
 
----@param node StateNode
 function MainHeroBehavior:Run()
     MainHeroBehavior.super.Run(self)
+    self.hero:UpdateNode()
 end
 
 --移动到刷怪区域
@@ -32,7 +32,7 @@ function MainHeroBehavior:EnterArea()
     behavior:AppendState(Handler.New(function()
         self.currArea = World.battleBehavior:GetCurrArea()
         self:NextState()
-    end, self))
+    end, self), "MainHeroBehavior EnterArea")
 
     return behavior
 end
@@ -48,7 +48,8 @@ end
 
 function MainHeroBehavior:DoMoveToArea()
     self:Debug("MainHeroBehavior:DoMoveToArea")
-    local tagPos = World.points[self.currArea.areaInfo.bornPos]
+    local tagNode = AStarTools.GetNearestNode(self.currArea.areaRect, self.hero.node)
+    local tagPos = tagNode.worldPosition
     self.hero:PlayRun()
     self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveEnd,self))
 end

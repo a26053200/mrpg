@@ -22,8 +22,8 @@ function BornArea:Ctor(areaInfo)
     self.waves = {}
 
     local pos = World.points[self.areaInfo.bornPos]
-    self.areaRect = Tools3D.GetAreaNodeRect(World.grid, pos, self.areaInfo.rangeX, self.areaInfo.rangeY)
-    self.points = Tools3D.GetRectRandomPos(pos, self.areaRect, World.grid.nodeRadius)
+    self.areaRect = AStarTools.GetAreaNodeRect(World.grid, pos, self.areaInfo.rangeX, self.areaInfo.rangeY)
+    self.points = AStarTools.GetRectRandomPos(pos, self.areaRect, World.grid.nodeRadius)
 end
 
 function BornArea:Refresh()
@@ -38,7 +38,7 @@ end
 --获取可以到达的格子
 ---@param src Game.Modules.Battle.Items.Monster
 function BornArea:GetReachableNode(src)
-    local soonGrid = Tools3D.GetRandomNeighboursNode(World.grid, src)
+    local soonGrid = AStarTools.GetRandomLimitedNode(self.areaRect, src)
     if soonGrid ~= nil and self:isEmptyGrid(soonGrid) then
         return soonGrid
     else
@@ -53,7 +53,7 @@ function BornArea:isEmptyGrid(node)
         local wave = self.waves[i]
         for j = 1, #wave.monsterList do
             local monster = wave.monsterList[j]
-            if Tools3D.isEqualNode(monster.node, node) or Tools3D.isEqualNode(monster.soonNode, node) then
+            if AStarTools.isEqualNode(monster.node, node) or AStarTools.isEqualNode(monster.soonNode, node) then
                 return false
             end
         end

@@ -41,8 +41,13 @@ end
 
 ---@param behavior Game.Modules.Common.Behavior.BaseBehavior
 function BaseBehavior:AppendBehavior(behavior, name)
-    --name = name == nil and "AppendBehavior:" .. self.fastLuaBehavior.id or name
-    self.fastLuaBehavior:AppendBehavior(behavior.fastLuaBehavior)
+    name = name == nil and "Sub BaseBehavior id:" .. self.fastLuaBehavior.id or name
+    self.fastLuaBehavior:AppendBehavior(behavior.fastLuaBehavior, name)
+end
+
+---@param interval number
+function BaseBehavior:AppendInterval(interval)
+    self.fastLuaBehavior:AppendInterval(interval)
 end
 
 ---@param node FastBehavior.StateNode
@@ -63,7 +68,7 @@ function BaseBehavior:NextState()
 end
 
 function BaseBehavior:Debug(msg)
-    print(string.format("<color=#FFFF00FF> [Behavior-%s] </color>%s",self.fastLuaBehavior.id, msg))
+    print(string.format("<color=#FFFF00FF> [%s-%s] </color>%s",self.gameObject.name, self.fastLuaBehavior.id, msg))
 end
 
 ---@param node StateNode

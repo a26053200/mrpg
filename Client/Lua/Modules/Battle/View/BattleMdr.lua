@@ -48,7 +48,7 @@ end
 
 function BattleMdr:StartBattle()
     DelayCallback(1, Handler.New(function()
-        --self.mainHero:SetBehaviorEnable(true)
+        self.mainHero:SetBehaviorEnable(true)
     end, self))
 end
 

@@ -35,15 +35,11 @@ function BornWave:Refresh()
 end
 
 function BornWave:Active()
-    self:ForEach(Handler.New(function(monster)
-        monster:SetBehaviorEnable(true)
-    end))
+    self:ForEach(Handler.New(self.ActiveMonster, self))
 end
 
 function BornWave:Visible(visible)
-    self:ForEach(Handler.New(function(monster)
-        monster:SetRenderObjVisible(visible)
-    end))
+    self:ForEach(Handler.New(self.VisibleMonster, self, visible))
 end
 
 function BornWave:DoRefresh()
@@ -53,10 +49,12 @@ function BornWave:DoRefresh()
         local num = math.random(bornInfo.minNum, bornInfo.maxNum)
         for n = 1, num do
             local monster = Monster.New(AvatarConfig.Clone(bornInfo.avatarName))
-            self.monsterList[count] = monster
+            table.insert(self.monsterList, monster)
+            --self.monsterList[count] = monster
             monster.transform.position = self.points[count]
-            monster:UpdateGridNode()
+            monster:UpdateNode()
             monster.soonNode = monster.node
+            --monster:SetBehaviorEnable(true)
             count = count + 1
         end
     end
@@ -67,6 +65,18 @@ function BornWave:ForEach(func)
     for i = 1, #self.monsterList do
         func:Execute(self.monsterList[i])
     end
+end
+
+
+---@param monster Game.Modules.Battle.Items.Monster
+function BornWave:ActiveMonster(monster)
+    monster:SetBehaviorEnable(true)
+end
+
+
+---@param monster Game.Modules.Battle.Items.Monster
+function BornWave:VisibleMonster(visible, monster)
+    monster:SetRenderObjVisible(visible)
 end
 
 ---@param monster Game.Modules.Battle.Items.Monster

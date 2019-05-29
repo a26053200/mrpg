@@ -18,9 +18,9 @@ function MonsterBehavior:Ctor(monster)
     MonsterBehavior.super.Ctor(self, monster)
 
     self:AppendBehavior(self:RandomPatrol())
+    self:AppendInterval(2)
 end
 
----@param node StateNode
 function MonsterBehavior:Run()
     MonsterBehavior.super.Run(self)
     self.currArea = World.battleBehavior:GetCurrArea()
@@ -31,7 +31,7 @@ end
 function MonsterBehavior:RandomPatrol()
     local behavior = self:CreateBehavior()
 
-    behavior:AppendState(Handler.New(self.DoRandomPatrol, self, behavior))
+    behavior:AppendState(Handler.New(self.DoRandomPatrol, self, behavior), "MonsterBehavior RandomPatrol")
 
     return behavior
 end
@@ -39,20 +39,20 @@ end
 function MonsterBehavior:DoRandomPatrol(behavior)
     local soonNode = self.currArea:GetReachableNode(self.monster.node)
     if soonNode then
-        self:Debug("MonsterBehavior:DoRandomPatrol")
+        --self:Debug("MonsterBehavior:DoRandomPatrol")
         self.monster.soonNode = soonNode
         self.monster:PlayRun()
         self.autoMove:MoveDirect(soonNode.worldPosition, Handler.New(self.OnPatrolMoveEnd,self, behavior))
     else
-        self:Debug("Not MonsterBehavior DoRandomPatrol")
+        --self:Debug("Not MonsterBehavior DoRandomPatrol")
         self:NextState()
     end
 end
 
 ---@param behavior Game.Modules.Common.Behavior.BaseBehavior
 function MonsterBehavior:OnPatrolMoveEnd(behavior)
-    self:Debug("MonsterBehavior:OnPatrolMoveEnd")
-    self.monster:UpdateGridNode()
+    --self:Debug("MonsterBehavior:OnPatrolMoveEnd")
+    self.monster:UpdateNode()
     self.monster:PlayIdle()
     self:NextState()
 end
@@ -73,6 +73,11 @@ function MonsterBehavior:DoMoveToTarget()
     self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveEnd,self))
 end
 
+
+function MonsterBehavior:Stop()
+    MonsterBehavior.super.Stop(self)
+    self:Debug("MonsterBehavior:Stop")
+end
 
 function MonsterBehavior:Dispose()
     MonsterBehavior.super.Dispose(self)

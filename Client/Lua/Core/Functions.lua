@@ -18,7 +18,7 @@ function AddEventListener(type, callback, caller)
     end
     local key = tostring(caller) .. tostring(callback)
     if _EventMap[key] ~= nil then
-        --logError("re register event!")
+        logError("re register event!")
         return
     end
     local handler = _handler(caller, callback)
@@ -42,6 +42,7 @@ function RemoveEventListener(type, callback, caller)
         return
     end
     local handler = _EventMap[key]
+    _EventMap[key] = nil
     if type == Event.Update then
         monoMgr:RemoveUpdateFun(handler)
     elseif type == Event.LateUpdate then
@@ -51,7 +52,11 @@ function RemoveEventListener(type, callback, caller)
     end
 end
 
-local _DelayEventMap = {} ---@type table<string, fun()>
+
+---============================
+--- Delay Call
+---============================
+local _DelayEventMap = {} ---@type table<string, Handler>
 
 local function update()
     local del = {}
@@ -70,11 +75,13 @@ local function delayStart()
     monoMgr:AddUpdateFun(update)
 end
 
----@param callback Handler
+---@param delay number
+---@param handler Handler
 function DelayCallback(delay, handler)
     local key
-    if isFunction(handler) then
-        key = tostring(handler)
+    if handler == nil or isFunction(handler) then
+        logError("error params! handler must be a Handler!")
+        return
     else
         if handler.callback == nil then
             logError("error params! handler.callback can not be nil!")
@@ -86,18 +93,26 @@ function DelayCallback(delay, handler)
             key = tostring(handler.callback)
         end
     end
-    --if _DelayEventMap[key] ~= nil then
-    --    logError("re register event!")
-    --    _DelayEventMap[key] = nil
-    --    return
-    --end
-    if isFunction(handler) then
-        _DelayEventMap[key] = Handler.New(handler)
-    else
-        _DelayEventMap[key] = handler
+    if _DelayEventMap[key] ~= nil then
+        logError("re register event!")
+        _DelayEventMap[key] = nil
+        return
     end
-    _DelayEventMap[key].startTime = Time.time
-    _DelayEventMap[key].delay = delay
+    _DelayEventMap[key] = handler
+    handler.startTime = Time.time
+    handler.delay = delay
+    return handler
+end
+
+---@param handler Handler
+function CancelDelayCallback(handler)
+    local key
+    if handler.caller then
+        key = tostring(handler.caller) .. tostring(handler.callback)
+    else
+        key = tostring(handler.callback)
+    end
+    _DelayEventMap[key] = nil
 end
 
 delayStart()

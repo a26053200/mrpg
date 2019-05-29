@@ -86,7 +86,7 @@ function AutoMove:Update()
     if not self:IsArrive(nextPos) then
         self.avatar.transform.forward = (nextPos - self.avatar.transform.position).normalized
         self.avatar.transform.position = Vector3.MoveTowards(self.avatar.transform.position, nextPos, self.delta)
-        self.avatar:UpdateGridNode()
+        self.avatar:UpdateNode()
     else
         self:NextPos()
     end
@@ -94,11 +94,11 @@ end
 
 function AutoMove:NextPos()
     if self.pathQueue:Size() == 1 then
+        self.avatar.transform.position = self.pathQueue:Shift()
+        self.avatar:UpdateNode()
         if self.overCallback then
             self.overCallback:Execute(true)
         end
-        self.avatar.transform.position = self.pathQueue:Shift()
-        self.avatar:UpdateGridNode()
         self:Stop()
     else
         local currPos = self.pathQueue[1]

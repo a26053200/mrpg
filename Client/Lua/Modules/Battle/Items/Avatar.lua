@@ -10,7 +10,7 @@ local RenderItem = require('Game.Modules.Battle.Items.RenderItem')
 ---@class Game.Modules.Battle.Items.Avatar : Game.Modules.Battle.Items.RenderItem
 ---@field avatarInfo AvatarInfo
 ---@field behavior Game.Modules.Battle.Behaviors.AvatarBehavior
----@field node AStar.Grid
+---@field node AStar.Node
 ---@field soonNode AStar.Grid 即将拥有的
 local Avatar = class("Game.Modules.Battle.Items.Avatar",RenderItem)
 
@@ -23,11 +23,11 @@ end
 function Avatar:OnLoadedRenderObj()
     Avatar.super.OnLoadedRenderObj(self)
     self.animCtrl = AnimController.New(self)
-    self.gameObject.name = self.avatarInfo.name
+    self.gameObject.name = self.avatarInfo.name .. "_"..self.avatarInfo.id
 end
 
 --更新所在格子
-function Avatar:UpdateGridNode()
+function Avatar:UpdateNode()
     self.node = World.grid:NodeFromWorldPoint(self.transform.position)
 end
 

@@ -13,7 +13,7 @@ local LuaMonoBehaviour = require('Betel.LuaMonoBehaviour')
 ---@field attach boolean
 local AttachCamera = class("Game.Modules.Common.Camera.AttachCamera",LuaMonoBehaviour)
 
-local Speed = 4.4
+local Speed = 5.7
 ---@param camera UnityEngine.Camera
 function AttachCamera:Ctor(camera)
     AttachCamera.super.Ctor(self, camera.gameObject)
