@@ -4,6 +4,7 @@
 --- DateTime: 2019/5/21 22:49
 ---
 
+local SceneItemHUD = require("Game.Modules.Battle.Items.SceneItemHUD")
 local AnimController = require("Game.Modules.Common.Components.AnimController")
 local RenderItem = require('Game.Modules.Battle.Items.RenderItem')
 
@@ -12,23 +13,59 @@ local RenderItem = require('Game.Modules.Battle.Items.RenderItem')
 ---@field behavior Game.Modules.Battle.Behaviors.AvatarBehavior
 ---@field node AStar.Node
 ---@field soonNode AStar.Grid 即将拥有的
+---@field isWakeup boolean 是否被惊醒
+---@field hud Game.Modules.Battle.Items.SceneItemHUD
 local Avatar = class("Game.Modules.Battle.Items.Avatar",RenderItem)
 
 ---@param avatarInfo AvatarInfo
 function Avatar:Ctor(avatarInfo)
     self.avatarInfo = avatarInfo
+    self:ResetAttr()
     Avatar.super.Ctor(self, avatarInfo)
+    self.aroundNodes = {}
+end
+
+function Avatar:ResetAttr()
+    local attr = self.avatarInfo.attr
+    local baseAttr = self.avatarInfo.baseAttr
+    attr.hpMax = math.random(baseAttr.hpMin, baseAttr.hpMin)
+    attr.hp = attr.hpMax
+    attr.atk = math.random(baseAttr.atkMin, baseAttr.atkMax)
+    attr.def = math.random(baseAttr.defMin, baseAttr.defMax)
+    attr.crit = math.random(baseAttr.critMin, baseAttr.critMax)
 end
 
 function Avatar:OnLoadedRenderObj()
     Avatar.super.OnLoadedRenderObj(self)
-    self.animCtrl = AnimController.New(self)
     self.gameObject.name = self.avatarInfo.name .. "_"..self.avatarInfo.id
+    self.animCtrl = AnimController.New(self)
+    self.hud = SceneItemHUD.New(self)
 end
 
 --更新所在格子
 function Avatar:UpdateNode()
     self.node = World.grid:NodeFromWorldPoint(self.transform.position)
+    --更新周围格子
+    for i = 1, 3 do
+        self.aroundNodes[i] = AStarTools.GetAroundNodes(World.grid, self.node, i)
+    end
+end
+
+--获取最近的格子
+---@param src Game.Modules.Battle.Items.Avatar
+---@return AStar.Node
+function Avatar:GetNearestNode(src, d)
+    local aroundNode = AStarTools.GetNearestNode(src.node, self.aroundNodes[d])
+    if aroundNode then
+        aroundNode.ownerId = src.avatarInfo.id
+    end
+    return aroundNode.node
+end
+
+--是否死亡
+function Avatar:IsDead()
+    local attr = self.avatarInfo.attr
+    return attr.hp == 0
 end
 
 ---@param callback Handler

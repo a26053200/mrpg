@@ -12,6 +12,7 @@ local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 ---@field areaInfo AreaInfo
 ---@field points table<number, UnityEngine.Vector3>
 ---@field monsterList table<number, Game.Modules.Battle.Items.Monster>
+---@field isActive boolean 激活后,该区域所有怪物可以攻击主角
 local BornWave = class("Game.Modules.Battle.Behaviors.BornArea",BaseBehavior)
 
 ---@param areaInfo AreaInfo
@@ -35,7 +36,7 @@ function BornWave:Refresh()
 end
 
 function BornWave:Active()
-    self:ForEach(Handler.New(self.ActiveMonster, self))
+    self:ForEach(Handler.New(self.Wakeup , self))
 end
 
 function BornWave:Visible(visible)
@@ -54,7 +55,7 @@ function BornWave:DoRefresh()
             monster.transform.position = self.points[count]
             monster:UpdateNode()
             monster.soonNode = monster.node
-            --monster:SetBehaviorEnable(true)
+            monster:SetBehaviorEnable(true)
             count = count + 1
         end
     end
@@ -67,6 +68,11 @@ function BornWave:ForEach(func)
     end
 end
 
+
+---@param monster Game.Modules.Battle.Items.Monster
+function BornWave:Wakeup(monster)
+    monster.isWakeup = true
+end
 
 ---@param monster Game.Modules.Battle.Items.Monster
 function BornWave:ActiveMonster(monster)
@@ -84,9 +90,13 @@ function BornWave:DisposeMonster(monster)
     monster:Dispose()
 end
 
+function BornWave:Clear()
+    self.isActive = false
+    self:ForEach(Handler.New(self.DisposeMonster, self))
+end
+
 function BornWave:Dispose()
     BornWave.super.Dispose(self)
-    self:ForEach(Handler.New(self.DisposeMonster, self))
 end
 
 return BornWave

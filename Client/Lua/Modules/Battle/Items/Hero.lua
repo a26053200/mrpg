@@ -15,6 +15,7 @@ local Hero = class("Game.Modules.Battle.Items.Hero",Avatar)
 function Hero:Ctor(heroInfo)
     self.heroInfo = heroInfo
     Hero.super.Ctor(self, heroInfo)
+    self.isWakeup = true
 end
 
 function Hero:Dispose()

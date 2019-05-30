@@ -9,6 +9,7 @@ local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.AvatarBehavior : Game.Modules.Common.Behavior.BaseBehavior
 ---@field avatar Game.Modules.Battle.Items.Avatar
+---@field target Game.Modules.Battle.Items.Avatar
 ---@field autoMove Game.Modules.Battle.Behaviors.AutoMove
 ---@field currArea Game.Modules.Battle.Behaviors.BornArea
 local AvatarBehavior = class("Game.Modules.Battle.Behaviors.AvatarBehavior",BaseBehavior)
@@ -25,12 +26,88 @@ end
 
 
 function AvatarBehavior:SearchTarget()
+    local behavior = self:CreateBehavior()
 
+    behavior:AppendState(Handler.New(function()
+        local target = self.currArea:GetNearestTarget(self.avatar)
+        if target then
+            self.target = target
+            self:NextState()
+        else
+            self:Debug("No target")
+        end
+    end , self))
+
+    return behavior
 end
+
+
+--目标的有效性
+function AvatarBehavior:isTargetValid()
+    if self.target == nil or self.target:IsDead() then
+        return false
+    else
+        return true
+    end
+end
+
+--自身是否可以攻击
+function AvatarBehavior:isSelfAttackable()
+    if self.avatar.isWakeup then
+        return true
+    else
+        return false
+    end
+end
+
+--移动到刷怪区域
+function AvatarBehavior:MoveToTarget()
+    local behavior = self:CreateBehavior()
+
+    behavior:AppendState(Handler.New(self.DoMoveToTarget, self))
+
+    return behavior
+end
+
+function AvatarBehavior:DoMoveToTarget()
+    if self.target then
+        self:Debug("AvatarBehavior:DoMoveToTarget")
+        local tagNode = self.target:GetNearestNode(self.avatar,1)
+        if AStarTools.DistanceNode(tagNode, self.avatar.node) == 1 then
+            self:NextState()
+        else
+            local tagPos = tagNode.worldPosition
+            self.avatar:PlayRun()
+            self.autoMove:Move(tagPos, Handler.New(self.OnMoveToTargetEnd,self))
+        end
+    else
+        self:NextState()
+    end
+end
+
+function AvatarBehavior:OnMoveToTargetEnd()
+    self:Debug("AvatarBehavior:OnMoveToTargetEnd")
+    self.avatar:PlayIdle()
+    self:NextState()
+end
+
 
 --共计单个目标知道目标死亡
 function AvatarBehavior:AttackUntilTargetDead()
 
+end
+
+--一轮攻击开始
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+function AvatarBehavior:AttackStart(behavior)
+    behavior:AppendState(Handler.New(function()
+        if self.target then
+            self:Debug("AttackStart")
+            behavior:NextState()
+        else
+            self:NextState()
+        end
+    end, self))
 end
 
 --接技能
@@ -39,7 +116,16 @@ end
 function AvatarBehavior:AppendSkill(behavior, skillInfo)
     behavior:AppendState(Handler.New(function()
         --self:Debug("skillInfo.animName:" .. skillInfo.animName)
+        Math3D.LookAt_XZ(self.avatar.transform, self.target.transform)
         self.avatar.animCtrl:PlayAnim(skillInfo.animName, Handler.New(self.OnSkillEnd, self, behavior, skillInfo))
+    end, self))
+end
+
+--一轮攻击结束
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+function AvatarBehavior:AttackEnd(behavior)
+    behavior:AppendState(Handler.New(function()
+        self:NextState()
     end, self))
 end
 

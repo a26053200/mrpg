@@ -35,6 +35,7 @@ end
 
 function RenderItem:Dispose()
     RenderItem.super.Dispose(self)
+    destroy(self.gameObject)
 end
 
 return RenderItem

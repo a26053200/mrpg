@@ -71,7 +71,7 @@ function StateMachine:NextState()
         self.currState = state
     elseif state._cname == List._cname then
         --随机选择
-        local randomIdxs = Math3D.GetRandomArray(state:Size())
+        local randomIdxs = Tools.GetRandomArray(state:Size())
         for i = 1, #randomIdxs do
             if state[randomIdxs[i]]:CanExecute() then
                 self.currState = state[randomIdxs[i]]

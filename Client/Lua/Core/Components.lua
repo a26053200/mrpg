@@ -13,6 +13,7 @@ local Slider            = "Slider"
 local Text              = "Text"
 local ListView          = "ListView"
 local Animator          = "Animator"
+local TextMesh          = "TextMesh"
 
 ---@param go UnityEngine.GameObject
 ---@return UnityEngine.RectTransform
@@ -74,4 +75,10 @@ end
 ---@return UnityEngine.Animator
 function GetAnimator(go)
     return go:GetCom(Animator)
+end
+
+---@param go UnityEngine.GameObject
+---@return UnityEngine.TextMesh
+function GetText3D(go)
+    return go:GetCom(TextMesh)
 end

@@ -17,12 +17,58 @@ function AStarTools.GetAreaNodeRect(grid, center, w, h)
     return rect
 end
 
+--获取一定距离周围点
+---@param grid AStar.Grid
+---@param center AStar.Node
+---@return table<number, AroundNode>
+function AStarTools.GetAroundNodes(grid, center, d)
+    local nodes = {}
+    for y = -d, d do
+        for x = -d, d do
+            if x ~= 0 or y ~= 0 then
+                local gx = center.gridX + x
+                local gy = center.gridY + y
+                if AStarTools.isWalkable_xy(gx, y) then
+                    table.insert(nodes, {node = grid:GetNode(gx, gy), ownerId = 0})
+                end
+            end
+        end
+    end
+    return nodes
+end
+
+--获取一定距离周围点
+---@param src AStar.Node
+---@param nodes table<number, AroundNode>
+---@return AroundNode
+function AStarTools.GetNearestNode(src, nodes)
+    local min = Mathf.Infinity
+    local node
+    for i = 1, #nodes do
+        local d = AStarTools.DistanceNode(src,nodes[i].node)
+        if d < min and nodes[i].ownerId == 0 then
+            min = d
+            node = nodes[i]
+        end
+    end
+    if node == nil then
+        for i = 1, #nodes do
+            local d = AStarTools.DistanceNode(src,nodes[i].node)
+            if d < min then
+                min = d
+                node = nodes[i]
+            end
+        end
+    end
+    return node
+end
+
 --矩形区域随机世界坐标数组
 ---@param rect UnityEngine.Rect
 function AStarTools.GetRectRandomPos(start, rect, r)
     local points = {}
     local idx = 1
-    local randoms = Math3D.GetRandomArray(rect.width * rect.height)
+    local randoms = Tools.GetRandomArray(rect.width * rect.height)
     local L = r * 2
     for i = 1, rect.height do
         for j = 1, rect.width do
@@ -61,6 +107,22 @@ function AStarTools.GetRandomNeighboursNode(grid, src)
     return nil
 end
 
+--格子节点是否walkable
+function AStarTools.isWalkable(node)
+    return AStarTools.isWalkable_xy(node.gridX, node.gridY)
+end
+
+--格子是否相等
+---@param x number
+---@param y number
+function AStarTools.isWalkable_xy(x, y)
+    if x >= 0 and y < World.grid.gridSizeX and y >= 0 and y < World.grid.gridSizeY then
+        local node = World.grid:GetNode(x, y)
+        if node.walkable then
+            return node
+        end
+    end
+end
 
 --在限定范围内随机上下左右方向点
 ---@param limitRect UnityEngine.Rect
@@ -84,7 +146,7 @@ end
 ---@param rect UnityEngine.Rect
 ---@param src AStar.Node
 ---@return AStar.Node
-function AStarTools.GetNearestNode(rect, src)
+function AStarTools.GetRectNearestNode(rect, src)
     local minDistance = Mathf.Infinity
     local node = nil;
     for i = 1, rect.height do
@@ -97,6 +159,12 @@ function AStarTools.GetNearestNode(rect, src)
         end
     end
     return node
+end
+
+---@param node1 AStar.Node
+---@param node2 AStar.Node
+function AStarTools.DistanceNode(node1, node2)
+    return Mathf.Max(Mathf.Abs(node1.gridX - node2.gridX), Mathf.Abs(node1.gridY - node2.gridY))
 end
 
 ---@param src AStar.Node

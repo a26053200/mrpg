@@ -34,6 +34,7 @@ function BattleMdr:OnInit()
 
     self.mainHero = MainHero.New(AvatarConfig.Get("TestHero"))
     self.mainHero.transform.position = self.points[1]
+    World.mainHero = self.mainHero
 
     self.attachCamera = AttachCamera.New(Camera.main)
     self.attachCamera:Attach(self.mainHero.gameObject)

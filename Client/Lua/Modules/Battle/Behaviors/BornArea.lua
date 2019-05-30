@@ -31,16 +31,15 @@ function BornArea:Refresh()
         local wave = BornWave.New(self.areaInfo, self.areaInfo.waves[i], self.points)
         table.insert(self.waves, wave)
         wave:Refresh()
-        wave:Active()
     end
 end
 
 --获取可以到达的格子
 ---@param src Game.Modules.Battle.Items.Monster
 function BornArea:GetReachableNode(src)
-    local soonGrid = AStarTools.GetRandomLimitedNode(self.areaRect, src)
-    if soonGrid ~= nil and self:isEmptyGrid(soonGrid) then
-        return soonGrid
+    local soonNode = AStarTools.GetRandomLimitedNode(self.areaRect, src)
+    if soonNode ~= nil and self:isEmptyNode(soonNode) then
+        return soonNode
     else
         return nil
     end
@@ -48,7 +47,7 @@ end
 
 ---@param node AStar.Node
 ---@return
-function BornArea:isEmptyGrid(node)
+function BornArea:isEmptyNode(node)
     for i = 1, #self.waves do
         local wave = self.waves[i]
         for j = 1, #wave.monsterList do
@@ -61,10 +60,44 @@ function BornArea:isEmptyGrid(node)
     return true
 end
 
+--获取最近的目标怪物
+---@param src AStar.Node
+---@return Game.Modules.Battle.Items.Monster
+function BornArea:GetNearestTarget(src)
+    local min = Mathf.Infinity
+    local target
+    for i = 1, #self.waves do
+        local wave = self.waves[i]
+        for j = 1, #wave.monsterList do
+            local monster = wave.monsterList[j]
+            local d = AStarTools.DistanceNode(src.node, monster.node)
+            if d ~= 0 and d < min and not Tools.isNullObj(monster) and not monster:IsDead() then
+                min = d
+                target = monster
+            end
+        end
+    end
+    return target
+end
+
+--便利所有怪物
+---@param func Handler
+function BornArea:ForEachMonster(func)
+    for i = 1, #self.waves do
+        local wave = self.waves[i]
+        for j = 1, #wave.monsterList do
+            local monster = wave.monsterList[j]
+            if  not Tools.isNullObj(monster) and not monster:IsDead() then
+                func:Execute(monster)
+            end
+        end
+    end
+end
+
 function BornArea:Active()
     for i = 1, #self.waves do
         local wave = self.waves[i]
-        wave:Refresh()
+        wave:Active()
     end
 end
 

@@ -28,6 +28,7 @@ AvatarConfig.data = {
             critMax = 0.2,
             critMin = 0.3,
         },
+        attr = {},
         skills =
         {
             [1] =
@@ -101,7 +102,8 @@ AvatarConfig.data = {
             critMax = 0.2,
             critMin = 0.3,
         },
-        skills = nil,
+        attr = {},
+        skills = {},
     }
 }
 

@@ -17,6 +17,8 @@ function MainHeroBehavior:Ctor(hero)
 
     self:AppendBehavior(self:EnterArea(), "MainHeroBehavior EnterArea")
     self:AppendBehavior(self:MoveToArea(), "MainHeroBehavior MoveToArea")
+    self:AppendBehavior(self:SearchTarget(), "MainHeroBehavior SearchTarget")
+    self:AppendBehavior(self:MoveToTarget(), "MainHeroBehavior MoveToTarget")
     self:AppendBehavior(self:AttackUntilTargetDead(), "MainHeroBehavior AttackUntilTargetDead")
 end
 
@@ -31,6 +33,7 @@ function MainHeroBehavior:EnterArea()
 
     behavior:AppendState(Handler.New(function()
         self.currArea = World.battleBehavior:GetCurrArea()
+
         self:NextState()
     end, self), "MainHeroBehavior EnterArea")
 
@@ -47,17 +50,27 @@ function MainHeroBehavior:MoveToArea()
 end
 
 function MainHeroBehavior:DoMoveToArea()
-    self:Debug("MainHeroBehavior:DoMoveToArea")
-    local tagNode = AStarTools.GetNearestNode(self.currArea.areaRect, self.hero.node)
+    --self:Debug("MainHeroBehavior:DoMoveToArea")
+    local tagNode = AStarTools.GetRectNearestNode(self.currArea.areaRect, self.hero.node)
     local tagPos = tagNode.worldPosition
     self.hero:PlayRun()
-    self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveEnd,self))
+    self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveToAreaEnd,self))
 end
 
-function MainHeroBehavior:OnMoveEnd()
-    self:Debug("MainHeroBehavior:OnMoveEnd")
+function MainHeroBehavior:OnMoveToAreaEnd()
+    self.currArea:Active()
+    --self:Debug("MainHeroBehavior:OnMoveToAreaEnd")
     self.hero:PlayIdle()
     self:NextState()
+end
+
+--一轮攻击开始
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+function MainHeroBehavior:AttackStart(behavior)
+    behavior:AppendState(Handler.New(function()
+        --self:Debug("MainHeroBehavior AttackStart")
+        behavior:NextState()
+    end, self))
 end
 
 --攻击单个目标知道目标死亡
@@ -66,9 +79,11 @@ function MainHeroBehavior:AttackUntilTargetDead()
 
     local skills = self.hero.heroInfo.skills
 
+    self:AttackStart(behavior)
     self:AppendSkill(behavior, skills[1])
     self:AppendSkill(behavior, skills[2])
     self:AppendSkill(behavior, skills[3])
+    self:AttackEnd(behavior)
 
     return behavior
 end

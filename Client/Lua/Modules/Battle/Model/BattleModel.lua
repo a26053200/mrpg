@@ -38,8 +38,8 @@
 
 --动态属性
 ---@class Attribute
----@field maxHp number
----@field currHp number
+---@field hpMax number
+---@field hp number
 ---@field atk number
 ---@field def number
 ---@field crit number
@@ -87,6 +87,11 @@
 ---@class BattleInfo
 ---@field pools table<number, BattleInfo>
 ---@field areas table<number, AreaInfo>
+
+---@class AroundNode
+---@field node AStar.Node
+---@field ownerId number
+
 
 local BaseModel = require("Game.Core.Ioc.BaseModel")
 ---@class Game.Modules.Battle.Model.BattleModel : Game.Core.Ioc.BaseModel

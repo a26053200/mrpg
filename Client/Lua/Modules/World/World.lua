@@ -11,6 +11,7 @@
 ---@field battleBehavior Game.Modules.Battle.Behaviors.BattleBehavior
 ---@field points table<number, UnityEngine.Vector3>
 ---@field grid AStar.Grid
+---@field mainHero Game.Modules.Battle.Items.MainHero
 local World = {}
 
 World.battleSubScene = nil
