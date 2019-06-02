@@ -12,8 +12,9 @@ sceneMgr = Framework.GameManager.GetSceneManager()
 netMgr = Framework.GameManager.GetNetworkManager()
 monoMgr = Framework.GameManager.GetMonoBehaviourManager()
 
+ticker = Framework.Ticker.Launch()
 LuaHelper = Framework.LuaHelper
-
+Hud = Framework.Hud
 --- Data Config
 Action          = require("Game.Config.Action")
 AvatarConfig    = require("Game.Config.AvatarConfig") ---@type AvatarConfig

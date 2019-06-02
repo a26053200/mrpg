@@ -22,6 +22,7 @@ local BattleMdr = class("BattleMdr",BaseMediator)
 
 function BattleMdr:OnInit()
 
+    World.root = GameObject.New("[World]")
     local pointsObj = self.scene.currSubScene:GetRootObjByName("Points")
     self.points = {}
     for i = 1, 6 do

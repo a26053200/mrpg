@@ -10,45 +10,62 @@ local _EventMap = {} ---@type table<string, fun()>
 
 ---
 ---@param type string
----@param handler fun()
+---@param callback fun()
+---@param caller any
 function AddEventListener(type, callback, caller)
     if callback == nil or caller == nil then
         logError("error params! callback or caller can not be nil!")
         return
     end
-    local key = tostring(caller) .. tostring(callback)
-    if _EventMap[key] ~= nil then
-        logError("re register event!")
-        return
+    local list = _EventMap[type]
+    if list == nil then
+        list = {}
+        _EventMap[type] = list
+    else
+        for i = 1, #list do
+            if tostring(list[i].callback) == tostring(callback) and tostring(list[i].caller) == tostring(caller) then
+            --if list[i].callback == callback and list[i].caller == caller then
+                --logError("re add EventListener!")
+                return
+            end
+        end
     end
-    local handler = _handler(caller, callback)
-    _EventMap[key] = handler
+    local handler = Handler.New(callback, caller)
+    table.insert(list, handler)
     if type == Event.Update then
-        monoMgr:AddUpdateFun(handler)
+        monoMgr:AddUpdateFun(handler.Delegate)
     elseif type == Event.LateUpdate then
-        monoMgr:AddLateUpdateFun(handler)
+        monoMgr:AddLateUpdateFun(handler.Delegate)
     elseif type == Event.FixedUpdate then
-        monoMgr:AddFixedUpdateFun(handler)
+        monoMgr:AddFixedUpdateFun(handler.Delegate)
     end
 end
 
 function RemoveEventListener(type, callback, caller)
-    if callback == nil or caller == nil then
+    if callback == nil then
         logError("error params! callback or caller can not be nil!")
         return
     end
-    local key = tostring(caller) .. tostring(callback)
-    if _EventMap[key] == nil then
+    local list = _EventMap[type]
+    if list == nil then
         return
     end
-    local handler = _EventMap[key]
-    _EventMap[key] = nil
-    if type == Event.Update then
-        monoMgr:RemoveUpdateFun(handler)
-    elseif type == Event.LateUpdate then
-        monoMgr:RemoveLateUpdateFun(handler)
-    elseif type == Event.FixedUpdate then
-        monoMgr:RemoveFixedUpdateFun(handler)
+    local del = {}
+    for i = 1, #list do
+        if tostring(list[i].callback) == tostring(callback) and tostring(list[i].caller) == tostring(caller) then
+        --if list[i].callback == callback and list[i].caller == caller then
+            if type == Event.Update then
+                monoMgr:RemoveUpdateFun(list[i].Delegate)
+            elseif type == Event.LateUpdate then
+                monoMgr:RemoveLateUpdateFun(list[i].Delegate)
+            elseif type == Event.FixedUpdate then
+                monoMgr:RemoveFixedUpdateFun(list[i].Delegate)
+            end
+            table.insert(del, i)
+        end
+    end
+    for i = 1, #del do
+        table.remove(list,del[i])
     end
 end
 
@@ -67,7 +84,7 @@ local function update()
         end
     end
     for i = 1, #del do
-        _DelayEventMap[del[i]] = nil
+        table.remove(_DelayEventMap,del[i])
     end
 end
 
@@ -78,41 +95,26 @@ end
 ---@param delay number
 ---@param handler Handler
 function DelayCallback(delay, handler)
-    local key
-    if handler == nil or isFunction(handler) then
-        logError("error params! handler must be a Handler!")
-        return
-    else
-        if handler.callback == nil then
-            logError("error params! handler.callback can not be nil!")
-            return
-        end
-        if handler.caller then
-            key = tostring(handler.caller) .. tostring(handler.callback)
-        else
-            key = tostring(handler.callback)
-        end
-    end
-    if _DelayEventMap[key] ~= nil then
-        logError("re register event!")
-        _DelayEventMap[key] = nil
+    local key = tostring(handler)
+    if ticker:Contain(key) then
         return
     end
-    _DelayEventMap[key] = handler
-    handler.startTime = Time.time
-    handler.delay = delay
+    --local go
+    --if handler.caller and handler.caller.gameObject then
+    --    go = handler.caller.gameObject
+    --end
+    ticker:DelayCallback(key,delay,function()
+        handler:Execute()
+    end)
+    --handler.startTime = Time.time
+    --handler.delay = delay
     return handler
 end
 
 ---@param handler Handler
 function CancelDelayCallback(handler)
-    local key
-    if handler.caller then
-        key = tostring(handler.caller) .. tostring(handler.callback)
-    else
-        key = tostring(handler.callback)
-    end
-    _DelayEventMap[key] = nil
+    local key = tostring(handler)
+    ticker:CancelDelayCallback(key)
 end
 
 delayStart()

@@ -19,8 +19,13 @@ function RenderItem:LoadRenderObj()
     if self.sceneItemInfo.prefabUrl and self.sceneItemInfo.prefabUrl ~= "" then
         self.renderObj = Instantiate(self.sceneItemInfo.prefabUrl,self.transform)
         self.renderObj:ResetTransform()
+        self:OnSetParent()
         self:OnLoadedRenderObj()
     end
+end
+
+function RenderItem:OnSetParent()
+    self.transform:SetParent(World.root.transform)
 end
 
 function RenderItem:OnLoadedRenderObj()

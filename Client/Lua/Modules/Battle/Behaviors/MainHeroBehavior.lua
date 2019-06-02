@@ -9,6 +9,7 @@ local HeroBehavior = require('Game.Modules.Battle.Behaviors.HeroBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.MainHeroBehavior : Game.Modules.Battle.Behaviors.HeroBehavior
 ---@field New fun() : Game.Modules.Battle.Behaviors.MainHeroBehavior
+---@field isAreaActive boolean
 local MainHeroBehavior = class("Game.Modules.Battle.Behaviors.MainHeroBehavior",HeroBehavior)
 
 ---@param hero Game.Modules.Battle.Items.MainHero
@@ -50,15 +51,20 @@ function MainHeroBehavior:MoveToArea()
 end
 
 function MainHeroBehavior:DoMoveToArea()
-    --self:Debug("MainHeroBehavior:DoMoveToArea")
-    local tagNode = AStarTools.GetRectNearestNode(self.currArea.areaRect, self.hero.node)
-    local tagPos = tagNode.worldPosition
-    self.hero:PlayRun()
-    self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveToAreaEnd,self))
+    if self.isAreaActive then
+        self:NextState()
+    else
+        --self:Debug("MainHeroBehavior:DoMoveToArea")
+        local tagNode = AStarTools.GetRectNearestNode(self.currArea.areaRect, self.hero.node)
+        local tagPos = tagNode.worldPosition
+        self.hero:PlayRun()
+        self.autoMove:SmoothMove(tagPos, Handler.New(self.OnMoveToAreaEnd,self))
+    end
 end
 
 function MainHeroBehavior:OnMoveToAreaEnd()
     self.currArea:Active()
+    self.isAreaActive = true
     --self:Debug("MainHeroBehavior:OnMoveToAreaEnd")
     self.hero:PlayIdle()
     self:NextState()
@@ -68,8 +74,13 @@ end
 ---@param behavior Game.Modules.Common.Behavior.BaseBehavior
 function MainHeroBehavior:AttackStart(behavior)
     behavior:AppendState(Handler.New(function()
-        --self:Debug("MainHeroBehavior AttackStart")
-        behavior:NextState()
+        self:Debug("MainHeroBehavior AttackStart")
+        if self:isTargetAttackValid() then
+            --self:Debug("AttackStart")
+            behavior:NextState()
+        else
+            self:NextState()
+        end
     end, self))
 end
 
@@ -86,6 +97,10 @@ function MainHeroBehavior:AttackUntilTargetDead()
     self:AttackEnd(behavior)
 
     return behavior
+end
+
+function MainHeroBehavior:Debug(msg)
+    print(string.format("<color=#FFFF00FF> [%s-%s] </color>%s",self.gameObject.name, self.fastLuaBehavior.id, msg))
 end
 
 function MainHeroBehavior:NextState()

@@ -37,7 +37,7 @@ AvatarConfig.data = {
                 accounts =
                 {
                     [1] = {
-                        delay = 0.5,
+                        percent = 0.5,
                         baseAttr = {
                             atkMax = 5,
                             atkMin = 10,
@@ -53,7 +53,7 @@ AvatarConfig.data = {
                 accounts =
                 {
                     [1] = {
-                        delay = 0.5,
+                        percent = 0.5,
                         baseAttr = {
                             atkMax = 5,
                             atkMin = 10,
@@ -69,7 +69,7 @@ AvatarConfig.data = {
                 accounts =
                 {
                     [1] = {
-                        delay = 0.5,
+                        percent = 0.5,
                         baseAttr = {
                             atkMax = 5,
                             atkMin = 10,
@@ -93,8 +93,8 @@ AvatarConfig.data = {
         animRun = "",
         animDead = "",
         baseAttr = {
-            hpMax = 100,
-            hpMin = 200,
+            hpMin = 100000,
+            hpMax = 200000,
             atkMax = 5,
             atkMin = 10,
             defMax = 1,
@@ -144,7 +144,7 @@ t.skills =
         accounts =
         {
             [1] = {
-                delay = 0.5,
+                percent = 0.5,
                 baseAttr = {
                     atkMax = 5,
                     atkMin = 10,
@@ -171,7 +171,7 @@ t.skills =
         accounts =
         {
             [1] = {
-                delay = 0.5,
+                percent = 0.5,
                 baseAttr = {
                     atkMax = 5,
                     atkMin = 10,
@@ -198,7 +198,7 @@ t.skills =
         accounts =
         {
             [1] = {
-                delay = 0.5,
+                percent = 0.5,
                 baseAttr = {
                     atkMax = 5,
                     atkMin = 10,

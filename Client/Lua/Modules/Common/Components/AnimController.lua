@@ -36,7 +36,7 @@ function AnimController:DoPlayAnim(animName, callback, speed, force)
     if callback then
         local length = self:GetAnimLength(animName)
         if length then
-            DelayCallback(length / speed, callback)
+            self:CreateDelay(length / speed, callback)
         else
             callback:Execute()
         end

@@ -38,14 +38,19 @@ function AStarTools.GetAroundNodes(grid, center, d)
 end
 
 --获取一定距离周围点
----@param src AStar.Node
+---@param src Game.Modules.Battle.Items.Avatar
 ---@param nodes table<number, AroundNode>
 ---@return AroundNode
 function AStarTools.GetNearestNode(src, nodes)
     local min = Mathf.Infinity
     local node
     for i = 1, #nodes do
-        local d = AStarTools.DistanceNode(src,nodes[i].node)
+        if nodes[i].ownerId == src.avatarInfo.id then
+            return nodes[i]
+        end
+    end
+    for i = 1, #nodes do
+        local d = AStarTools.DistanceNode(src.node,nodes[i].node)
         if d < min and nodes[i].ownerId == 0 then
             min = d
             node = nodes[i]
@@ -53,7 +58,7 @@ function AStarTools.GetNearestNode(src, nodes)
     end
     if node == nil then
         for i = 1, #nodes do
-            local d = AStarTools.DistanceNode(src,nodes[i].node)
+            local d = AStarTools.DistanceNode(src.node,nodes[i].node)
             if d < min then
                 min = d
                 node = nodes[i]
@@ -99,7 +104,7 @@ function AStarTools.GetRandomNeighboursNode(grid, src)
     end
     if src.gridX + rx >= 0 and src.gridX + rx < grid.gridSizeX
             and src.gridY + ry >= 0 and src.gridY + ry < grid.gridSizeY then
-        local node = World.grid:GetNode(src.gridX + rx, src.gridY + ry)
+        local node = grid:GetNode(src.gridX + rx, src.gridY + ry)
         if node.walkable then
             return node
         end

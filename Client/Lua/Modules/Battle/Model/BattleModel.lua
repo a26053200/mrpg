@@ -17,7 +17,7 @@
 
 --结算
 ---@class AccountInfo
----@field delay number
+---@field percent number
 ---@field shakeCamera ShakeCamera
 ---@field baseAttr BaseAttribute
 

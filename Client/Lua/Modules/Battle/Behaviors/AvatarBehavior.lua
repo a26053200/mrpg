@@ -22,6 +22,7 @@ function AvatarBehavior:Ctor(avatar)
     AvatarBehavior.super.Ctor(self, avatar.gameObject)
     self.avatar = avatar
     self.autoMove = AutoMove.New(self.avatar)
+    self.startTime = 0
 end
 
 
@@ -29,12 +30,18 @@ function AvatarBehavior:SearchTarget()
     local behavior = self:CreateBehavior()
 
     behavior:AppendState(Handler.New(function()
-        local target = self.currArea:GetNearestTarget(self.avatar)
-        if target then
-            self.target = target
-            self:NextState()
+        if self:isTargetValid() then
+            self:NextState() --无需变更攻击目标
         else
-            self:Debug("No target")
+            local target = self.currArea:GetNearestTarget(self.avatar)
+            if target then
+                self.target = target
+                self:NextState()
+            else
+                self.target = nil
+                self:Debug("No target")
+                self:NextState()
+            end
         end
     end , self))
 
@@ -42,39 +49,37 @@ function AvatarBehavior:SearchTarget()
 end
 
 
---目标的有效性
-function AvatarBehavior:isTargetValid()
-    if self.target == nil or self.target:IsDead() then
-        return false
-    else
-        return true
-    end
-end
-
---自身是否可以攻击
-function AvatarBehavior:isSelfAttackable()
-    if self.avatar.isWakeup then
-        return true
-    else
-        return false
-    end
-end
-
 --移动到刷怪区域
 function AvatarBehavior:MoveToTarget()
     local behavior = self:CreateBehavior()
 
+    behavior:AppendState(Handler.New(self.DoWaitingTargetMoveEnd, self, behavior))
     behavior:AppendState(Handler.New(self.DoMoveToTarget, self))
 
     return behavior
 end
 
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+function AvatarBehavior:DoWaitingTargetMoveEnd(behavior)
+    self:StartCoroutine(function()
+        if self:isTargetValid() then
+            while self.target.isMoving do
+                coroutine.step(1)
+            end
+            behavior:NextState()
+        else
+            self:NextState()
+        end
+    end)
+end
+
 function AvatarBehavior:DoMoveToTarget()
-    if self.target then
+    if self:isTargetValid() then
         self:Debug("AvatarBehavior:DoMoveToTarget")
         local tagNode = self.target:GetNearestNode(self.avatar,1)
         if AStarTools.DistanceNode(tagNode, self.avatar.node) == 1 then
-            self:NextState()
+            self.avatar:PlayRun()
+            self.autoMove:MoveDirect(tagNode.worldPosition, Handler.New(self.OnMoveToTargetEnd,self))
         else
             local tagPos = tagNode.worldPosition
             self.avatar:PlayRun()
@@ -101,7 +106,7 @@ end
 ---@param behavior Game.Modules.Common.Behavior.BaseBehavior
 function AvatarBehavior:AttackStart(behavior)
     behavior:AppendState(Handler.New(function()
-        if self.target then
+        if self:isTargetAttackValid() then
             self:Debug("AttackStart")
             behavior:NextState()
         else
@@ -115,10 +120,56 @@ end
 ---@param skillInfo SkillInfo
 function AvatarBehavior:AppendSkill(behavior, skillInfo)
     behavior:AppendState(Handler.New(function()
-        --self:Debug("skillInfo.animName:" .. skillInfo.animName)
-        Math3D.LookAt_XZ(self.avatar.transform, self.target.transform)
-        self.avatar.animCtrl:PlayAnim(skillInfo.animName, Handler.New(self.OnSkillEnd, self, behavior, skillInfo))
+        if self:isTargetAttackValid() then
+            Math3D.LookAt_XZ(self.avatar.transform, self.target.transform)
+            local length = self.avatar.animCtrl:GetAnimLength(skillInfo.animName)
+            for i = 1, #skillInfo.accounts do
+                self.avatar.animCtrl:CreateDelay(length * skillInfo.accounts[i].percent, Handler.New(function()
+                    self:OnAccountSkill(self.target, skillInfo, skillInfo.accounts[i])
+                end, self))
+            end
+            if self.startTime ~= 0 then
+                logError("AppendSkill error.animName:" .. skillInfo.animName)
+            end
+            self.startTime = Time.time
+            self:Debug("AppendSkill.animName:" .. skillInfo.animName)
+            --self.avatar.animCtrl:CreateDelay(length,Handler.New(self.OnSkillEnd, self, behavior, skillInfo))
+            self.avatar.animCtrl:PlayAnim(skillInfo.animName,Handler.New(self.OnSkillEnd, self, behavior, skillInfo))
+        else
+            --目标不可攻击
+            behavior:NextState()
+        end
     end, self))
+end
+
+---@param behavior Game.Modules.Common.Behavior.BaseBehavior
+---@param skillInfo SkillInfo
+function AvatarBehavior:OnSkillEnd(behavior, skillInfo)
+    self:Debug("OnSkillEnd.animName:" .. skillInfo.animName .. "  ".. (Time.time - self.startTime))
+    behavior:NextState()
+    self.startTime = 0
+end
+
+---@param target Game.Modules.Battle.Items.Avatar
+---@param skillInfo SkillInfo
+---@param accountInfo AccountInfo
+function AvatarBehavior:OnAccountSkill(target, skillInfo, accountInfo)
+    if self:isTargetAccountValid(target) then
+        local atkAttr = self.avatar.avatarInfo.attr
+        local defAttr = target.avatarInfo.attr
+        local skillAtk = math.random(accountInfo.baseAttr.atkMin,accountInfo.baseAttr.atkMax)
+        local crit = math.random(accountInfo.baseAttr.critMin,accountInfo.baseAttr.critMax)
+        local damage = atkAttr.atk + skillAtk - defAttr.def --技能攻击 + 本身攻击 - 目标防御
+        defAttr.hp = Mathf.Max(0, defAttr.hp - damage)
+        if defAttr.hp == 0 then
+            local event = {}
+            event.type = BattleEvent.TargetDead
+            event.target = self.target
+            BattleEvent.Dispatch(event)
+        end
+    else
+
+    end
 end
 
 --一轮攻击结束
@@ -129,14 +180,43 @@ function AvatarBehavior:AttackEnd(behavior)
     end, self))
 end
 
----@param behavior Game.Modules.Common.Behavior.BaseBehavior
----@param skillInfo SkillInfo
-function AvatarBehavior:OnSkillEnd(behavior, skillInfo)
-    behavior:NextState()
+
+--目标的有效性
+function AvatarBehavior:isTargetValid()
+    if self.target == nil or self.target:IsDead() then
+        return false
+    else
+        return true
+    end
 end
 
+--目标可被攻击
+function AvatarBehavior:isTargetAttackValid()
+    return self:isTargetValid()
+end
+
+--目标可被伤害结算
+function AvatarBehavior:isTargetAccountValid(target)
+    if target == nil or target:IsDead() then
+        return false
+    else
+        return true
+    end
+end
+
+--自身是否可以攻击
+function AvatarBehavior:isSelfAttackable()
+    if self.avatar.isWakeup then
+        return true
+    else
+        return false
+    end
+end
 function AvatarBehavior:Dispose()
     AvatarBehavior.super.Dispose(self)
+    if self.autoMove then
+        self.autoMove:Dispose()
+    end
 end
 
 return AvatarBehavior

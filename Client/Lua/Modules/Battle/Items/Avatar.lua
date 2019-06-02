@@ -15,6 +15,8 @@ local RenderItem = require('Game.Modules.Battle.Items.RenderItem')
 ---@field soonNode AStar.Grid 即将拥有的
 ---@field isWakeup boolean 是否被惊醒
 ---@field hud Game.Modules.Battle.Items.SceneItemHUD
+---@field deadOver boolean 死亡动画播放完毕
+---@field isMoving boolean 是否正在移动
 local Avatar = class("Game.Modules.Battle.Items.Avatar",RenderItem)
 
 ---@param avatarInfo AvatarInfo
@@ -55,7 +57,7 @@ end
 ---@param src Game.Modules.Battle.Items.Avatar
 ---@return AStar.Node
 function Avatar:GetNearestNode(src, d)
-    local aroundNode = AStarTools.GetNearestNode(src.node, self.aroundNodes[d])
+    local aroundNode = AStarTools.GetNearestNode(src, self.aroundNodes[d])
     if aroundNode then
         aroundNode.ownerId = src.avatarInfo.id
     end
@@ -80,7 +82,20 @@ end
 
 ---@param callback Handler
 function Avatar:PlayDead(callback)
-    self.animCtrl:PlayAnim(self.avatarInfo.animDead, callback)
+    self:OnDead()
+    self.animCtrl:PlayAnim(self.avatarInfo.animDead, Handler.New(function()
+        self:OnDeadOver()
+        callback:Execute()
+    end, self))
+end
+
+function Avatar:OnDead()
+    self.hud:Dispose()
+end
+
+function Avatar:OnDeadOver()
+    self:SetRenderObjVisible(false)
+    self.deadOver = true
 end
 
 ---@param enable boolean
@@ -90,6 +105,9 @@ end
 
 function Avatar:Dispose()
     Avatar.super.Dispose(self)
+    if self.hud then
+        self.hud:Dispose()
+    end
     if self.animCtrl then
         self.animCtrl:Dispose()
     end

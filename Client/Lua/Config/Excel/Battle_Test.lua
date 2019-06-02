@@ -25,11 +25,10 @@ local data = {
     },
     areas =
     {
-        [1] =
         {
             bornPos = 2,
             rangeX = 3,
-            rangeY = 6,
+            rangeY = 3,
             waves = {
                 [1] =
                 {
@@ -40,38 +39,6 @@ local data = {
                             avatarName = "Dragon",
                             minNum = 1,
                             maxNum = 1,
-                        },
-                        --[2] =
-                        --{
-                        --    avatarName = "Ghost",
-                        --    minNum = 2,
-                        --    maxNum = 3,
-                        --},
-                        --[3] =
-                        --{
-                        --    avatarName = "Werewolf",
-                        --    minNum = 2,
-                        --    maxNum = 3,
-                        --},
-                    },
-                },
-            },
-        },
-        [2] =
-        {
-            bornPos = 3,
-            rangeX = 3,
-            rangeY = 6,
-            waves = {
-                [1] =
-                {
-                    borns =
-                    {
-                        [1] =
-                        {
-                            avatarName = "Dragon",
-                            minNum = 2,
-                            maxNum = 3,
                         },
                         [2] =
                         {
@@ -89,6 +56,37 @@ local data = {
                 },
             },
         },
+        --{
+        --    bornPos = 3,
+        --    rangeX = 3,
+        --    rangeY = 6,
+        --    waves = {
+        --        [1] =
+        --        {
+        --            borns =
+        --            {
+        --                [1] =
+        --                {
+        --                    avatarName = "Dragon",
+        --                    minNum = 2,
+        --                    maxNum = 3,
+        --                },
+        --                [2] =
+        --                {
+        --                    avatarName = "Ghost",
+        --                    minNum = 2,
+        --                    maxNum = 3,
+        --                },
+        --                [3] =
+        --                {
+        --                    avatarName = "Werewolf",
+        --                    minNum = 2,
+        --                    maxNum = 3,
+        --                },
+        --            },
+        --        },
+        --    },
+        --},
     }
 }
 

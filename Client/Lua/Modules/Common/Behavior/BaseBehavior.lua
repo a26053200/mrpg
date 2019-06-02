@@ -50,7 +50,7 @@ function BaseBehavior:AppendInterval(interval)
     self.fastLuaBehavior:AppendInterval(interval)
 end
 
----@param node FastBehavior.StateNode
+---@param node FastBehavior.StateNode .. tostring(handler.caller)
 function BaseBehavior:AppendStateNode(node)
     self.fastLuaBehavior:AppendStateNode(node)
 end
@@ -68,7 +68,7 @@ function BaseBehavior:NextState()
 end
 
 function BaseBehavior:Debug(msg)
-    print(string.format("<color=#FFFF00FF> [%s-%s] </color>%s",self.gameObject.name, self.fastLuaBehavior.id, msg))
+    --print(string.format("<color=#FFFF00FF> [%s-%s] </color>%s",self.gameObject.name, self.fastLuaBehavior.id, msg))
 end
 
 ---@param node StateNode

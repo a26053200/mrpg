@@ -21,6 +21,7 @@ function MonsterBehavior:Ctor(monster)
 
     self:AppendBehavior(self:SearchTarget(), "MonsterBehavior SearchTarget")
     self:AppendBehavior(self:MoveToTarget(), "MonsterBehavior MoveToTarget")
+    self:AppendBehavior(self:CheckMove(), "MonsterBehavior CheckMove")
     self:AppendBehavior(self:AttackUntilTargetDead(), "MonsterBehavior AttackUntilTargetDead")
 
     self:AppendInterval(2)
@@ -47,7 +48,7 @@ function MonsterBehavior:DoRandomPatrol(behavior)
     elseif self.monster.isWakeup then
         self:NextState() --被惊醒了
     else
-        local soonNode = self.currArea:GetReachableNode(self.monster.node)
+        local soonNode = self.currArea:GetLimitedReachableNode(self.monster)
         if soonNode then
             --self:Debug("MonsterBehavior:DoRandomPatrol")
             self.monster.soonNode = soonNode
@@ -83,15 +84,48 @@ function MonsterBehavior:SearchTarget()
     return behavior
 end
 
+--检查移动
+function MonsterBehavior:CheckMove()
+    local behavior = self:CreateBehavior()
+
+    behavior:AppendState(Handler.New(function()
+        if self.currArea:isEmptyNode(self.monster) then
+            self:NextState()
+        else
+            local soonNode = self.currArea:GetReachableNode(self.monster)
+            if soonNode then
+                --self:Debug("MonsterBehavior:DoRandomPatrol")
+                self.monster.soonNode = soonNode
+                self.monster:PlayRun()
+                self.autoMove:MoveDirect(soonNode.worldPosition, Handler.New(function()
+                    self:NextState()
+                end ,self))
+            else
+                --self:Debug("Not MonsterBehavior DoRandomPatrol")
+                self:NextState()
+            end
+        end
+    end , self))
+
+    return behavior
+end
+
 --一轮攻击开始
 ---@param behavior Game.Modules.Common.Behavior.BaseBehavior
 function MonsterBehavior:AttackStart(behavior)
     behavior:AppendState(Handler.New(function()
-        if self.target then
-            self:Debug("MonsterBehavior AttackStart")
-            behavior:NextState()
+        if self:isTargetAttackValid() then
+            --足够近才能攻击
+            if AStarTools.DistanceNode(self.target.node, self.avatar.node) <= 1 then
+                --self:Debug("MonsterBehavior AttackStart")
+                behavior:NextState()
+            else
+                --self:Debug("not enough distance. ignore attack")
+                self:NextState() --跳过攻击
+            end
         else
-            self:NextState()
+            --self:Debug("no target. ignore attack")
+            self:NextState() --跳过攻击
         end
     end, self))
 end

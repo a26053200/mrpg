@@ -37,12 +37,30 @@ function AutoMove:Move(destPos, overCallback, stepCallback)
     self:DoPathFound(destPos, false, overCallback, stepCallback)
 end
 
+--只移动一步
+function AutoMove:MoveStep(destPos, overCallback, stepCallback)
+    self.destPos = destPos
+    self.overCallback = overCallback
+    self.stepCallback = stepCallback
+    self.aStar.RequestPath(self.avatar.transform.position, destPos, 5, 10, false,function(path)
+        self.lookPoints = path.lookPoints
+        self:OnPathFound({path.lookPoints[0]})
+        self.avatar.isMoving = true
+        AddEventListener(Event.Update, self.Update, self)
+    end,function()
+        if self.overCallback then
+            self.overCallback:Execute(false)
+        end
+    end)
+end
+
 function AutoMove:MoveDirect(destPos, overCallback, stepCallback)
     self.destPos = destPos
     self.overCallback = overCallback
     self.stepCallback = stepCallback
     self.pathQueue = List.New()
     self.pathQueue:UnShift(destPos)
+    self.avatar.isMoving = true
     AddEventListener(Event.Update, self.Update, self)
 end
 
@@ -56,7 +74,8 @@ function AutoMove:DoPathFound(destPos, smooth, overCallback, stepCallback)
         end
     else
         self.aStar.RequestPath(self.avatar.transform.position, destPos, 5, 10, smooth,function(path)
-            self:OnPathFound(path)
+            self.lookPoints = path.lookPoints
+            self:OnPathFound(Tools.ToLuaArray(path.lookPoints))
         end,function()
             if self.overCallback then
                 self.overCallback:Execute(false)
@@ -67,15 +86,10 @@ end
 
 ---@param path AStar.Path
 function AutoMove:OnPathFound(path)
-    self.pathQueue = List.New(Tools.ToLuaArray(path.lookPoints))
+    self.pathQueue = List.New(path)
     --self.pathQueue:UnShift(self.avatar.transform.position)
-    if self.pathQueue:Size() == 1 then
-        if self.overCallback then
-            self.overCallback:Execute(true)
-        end
-    else
-        AddEventListener(Event.Update, self.Update, self)
-    end
+    self.avatar.isMoving = true
+    AddEventListener(Event.Update, self.Update, self)
 end
 
 function AutoMove:Update()
@@ -83,6 +97,10 @@ function AutoMove:Update()
         return
     end
     local nextPos = self.pathQueue:Peek()
+    if nextPos == nil then
+        --print(self.gameObject.name .. " - nextPos nil")
+        return
+    end
     if not self:IsArrive(nextPos) then
         self.avatar.transform.forward = (nextPos - self.avatar.transform.position).normalized
         self.avatar.transform.position = Vector3.MoveTowards(self.avatar.transform.position, nextPos, self.delta)
@@ -99,6 +117,7 @@ function AutoMove:NextPos()
         if self.overCallback then
             self.overCallback:Execute(true)
         end
+        --print(self.gameObject.name .. " - AutoMove Stop")
         self:Stop()
     else
         local currPos = self.pathQueue[1]
@@ -126,6 +145,7 @@ function AutoMove:IsArrive(nextPos)
 end
 
 function AutoMove:Stop()
+    self.avatar.isMoving = false
     self.overCallback = nil
     self.stepCallback = nil
     RemoveEventListener(Event.Update, self.Update, self)

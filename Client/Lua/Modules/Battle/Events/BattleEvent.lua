@@ -4,28 +4,22 @@
 --- DateTime: 2019/5/23 22:51
 ---
 
+---@class BattleEvent
+---@field type string
+---@field target Game.Modules.Battle.Items.Avatar
 local BattleEvent = {}
 
 --战场已经创建完毕
-BattleEvent.BattleCreated = ""
+BattleEvent.BattleCreated = "BattleCreated"
 
---战场已经创建完毕
-BattleEvent.BattleCreated = ""
+--目标死亡
+BattleEvent.TargetDead = "Battle TargetDead"
 
---战场已经创建完毕
-BattleEvent.BattleCreated = ""
+--当前区域所有怪物都已经死亡
+BattleEvent.AreaAllDead = "Battle AreaAllDead"
 
---战场已经创建完毕
-BattleEvent.BattleCreated = ""
-
---战场已经创建完毕
-BattleEvent.BattleCreated = ""
-
---战场已经创建完毕
-BattleEvent.BattleCreated = ""
-
---战场已经创建完毕
-BattleEvent.BattleCreated = ""
+--当前区域所有怪物都已经死亡,死亡动作播放完毕
+BattleEvent.AreaAllDeadOVer = "Battle AreaAllDeadOVer"
 
 
 BattleEvent.dispatcher = EventDispatcher.New()

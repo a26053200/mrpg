@@ -36,23 +36,37 @@ end
 
 --获取可以到达的格子
 ---@param src Game.Modules.Battle.Items.Monster
-function BornArea:GetReachableNode(src)
-    local soonNode = AStarTools.GetRandomLimitedNode(self.areaRect, src)
-    if soonNode ~= nil and self:isEmptyNode(soonNode) then
+function BornArea:GetLimitedReachableNode(src)
+    local soonNode = AStarTools.GetRandomLimitedNode(self.areaRect, src.node)
+    if soonNode ~= nil and self:isEmptyNode(src) then
         return soonNode
     else
         return nil
     end
 end
 
----@param node AStar.Node
+--获取可以到达的格子
+---@param src Game.Modules.Battle.Items.Monster
+function BornArea:GetReachableNode(src)
+    local soonNode = AStarTools.GetRandomNeighboursNode(World.grid, src.node)
+    if soonNode ~= nil and self:isEmptyNode(src) then
+        return soonNode
+    else
+        return nil
+    end
+end
+
+---@param src Game.Modules.Battle.Items.Monster
 ---@return
-function BornArea:isEmptyNode(node)
+function BornArea:isEmptyNode(src)
     for i = 1, #self.waves do
         local wave = self.waves[i]
         for j = 1, #wave.monsterList do
             local monster = wave.monsterList[j]
-            if AStarTools.isEqualNode(monster.node, node) or AStarTools.isEqualNode(monster.soonNode, node) then
+            if src == monster then
+                return true
+            end
+            if AStarTools.isEqualNode(monster.node, src.node) or AStarTools.isEqualNode(monster.soonNode, src.node) then
                 return false
             end
         end
@@ -80,6 +94,41 @@ function BornArea:GetNearestTarget(src)
     return target
 end
 
+
+--所有怪物都已经死亡
+---@return
+function BornArea:IsAllDead()
+    local all = true
+    for i = 1, #self.waves do
+        local wave = self.waves[i]
+        for j = 1, #wave.monsterList do
+            local monster = wave.monsterList[j]
+            if not monster:IsDead() then
+                all = false
+                break
+            end
+        end
+    end
+    return all
+end
+
+--所有怪物都已经死亡结束
+---@return
+function BornArea:IsAllDeadOver()
+    local all = true
+    for i = 1, #self.waves do
+        local wave = self.waves[i]
+        for j = 1, #wave.monsterList do
+            local monster = wave.monsterList[j]
+            if not monster.deadOver then
+                all = false
+                break
+            end
+        end
+    end
+    return all
+end
+
 --便利所有怪物
 ---@param func Handler
 function BornArea:ForEachMonster(func)
@@ -101,5 +150,11 @@ function BornArea:Active()
     end
 end
 
+function BornArea:Clear()
+    for i = 1, #self.waves do
+        local wave = self.waves[i]
+        wave:Clear()
+    end
+end
 
 return BornArea

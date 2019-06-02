@@ -13,7 +13,7 @@ local LuaMonoBehaviour = require('Betel.LuaMonoBehaviour')
 ---@field name UnityEngine.TextMesh
 local SceneItemHUD = class("Game.Modules.Battle.Items.SceneItemHUD", LuaMonoBehaviour)
 
-local Offset_Y = 1
+local Offset_Y = 2.1
 
 ---@param avatar Game.Modules.Battle.Items.Avatar
 function SceneItemHUD:Ctor(avatar)
@@ -27,18 +27,23 @@ end
 function SceneItemHUD:Init()
     self.hp = GetText3D(self.gameObject:FindChild("hp"))
     self.name = GetText3D(self.gameObject:FindChild("name"))
+    self.hud = Hud.New(self.avatar.avatarInfo.name,1)
+    self.hud.transform:SetParent(self.transform)
+    self.hud.transform.gameObject:ResetTransform()
     self:Update()
 end
 
 function SceneItemHUD:Update()
     local attr = self.avatar.avatarInfo.attr
-    self.hp = attr.hp .. "/" .. attr.hpMax
-    self.name =  self.avatar.avatarInfo.name
+    self.hud:UpdateHud(Mathf.Max(0, attr.hp / attr.hpMax))
+    --self.hp.text = attr.hp .. "/" .. attr.hpMax
+    --self.name.text =  self.avatar.avatarInfo.name
     self.transform.position = self.avatar.transform.position + Vector3.New(0,Offset_Y,0)
 end
 
 function SceneItemHUD:Dispose()
     SceneItemHUD.super.Dispose(self)
+    destroy(self.gameObject)
     RemoveEventListener(Event.Update, self.Update, self)
 end
 

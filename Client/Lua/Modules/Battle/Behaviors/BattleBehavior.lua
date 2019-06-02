@@ -9,9 +9,11 @@ local BaseBehavior = require('Game.Modules.Common.Behavior.BaseBehavior')
 
 ---@class Game.Modules.Battle.Behaviors.BattleBehavior : Game.Modules.Common.Behavior.BaseBehavior
 ---@field battleInfo BattleInfo
+---@field areaList table<number, Game.Modules.Battle.Behaviors.BornArea>
 ---@field bornAreas table<number, Game.Modules.Battle.Behaviors.BornArea>
 ---@field points table<number, UnityEngine.Vector3>
 ---@field monsterList table<number, Game.Modules.Battle.Items.Monster>
+---@field lastArea Game.Modules.Battle.Behaviors.BornArea
 local BattleBehavior = class("Game.Modules.Battle.Behaviors.BattleBehavior",BaseBehavior)
 
 ---@param battleInfo BattleInfo
@@ -19,18 +21,22 @@ local BattleBehavior = class("Game.Modules.Battle.Behaviors.BattleBehavior",Base
 function BattleBehavior:Ctor(battleInfo, gameObject)
     BattleBehavior.super.Ctor(self, gameObject)
     self.battleInfo = battleInfo
+    self.areaList = List.New()
     self.bornAreas = List.New()
 
     World.battleBehavior = self
+
+    BattleEvent.dispatcher:AddEventListener(BattleEvent.TargetDead, handler(self, self.OnTargetDead))
 end
 
 --初始化战场
 function BattleBehavior:CreateBattle()
     for i = 1, #self.battleInfo.areas do
         local area = BornArea.New(self.battleInfo.areas[i])
-        self.bornAreas:Push(area)
+        self.areaList:Push(area)
         area:Refresh()
     end
+    self.bornAreas = self.areaList:Clone()
 end
 
 --当前区域
@@ -42,8 +48,42 @@ end
 --下一个区域
 ---@return Game.Modules.Battle.Behaviors.BornArea
 function BattleBehavior:NextArea()
-    return self.bornAreas:Shift()
+    self:Debug("下一个区域")
+    if self.bornAreas:Size() == 0 then
+        self.bornAreas = self.areaList:Clone()
+    else
+        return self.bornAreas:Shift()
+    end
+
 end
+
+---@param event BattleEvent
+function BattleBehavior:OnTargetDead(event)
+    local currArea = World.battleBehavior:GetCurrArea()
+    if currArea:IsAllDead() then
+        self:OnAreaAllDead()
+    end
+end
+
+function BattleBehavior:OnAreaAllDead()
+    self.lastArea = World.battleBehavior:GetCurrArea()
+    self:Debug("当前区域所有怪物都已经死亡")
+
+    self:NextArea()
+    self:StartCoroutine(function()
+        while self.lastArea:IsAllDeadOver() do
+            coroutine.step()
+        end
+        self:OnAreaAllDeadOver()
+    end)
+end
+
+function BattleBehavior:OnAreaAllDeadOver()
+    self:Debug("当前区域所有怪物都已经死亡结束")
+    self.lastArea:Clear()
+    self:Debug("清除上一个区域")
+end
+
 
 ---@param func Handler
 function BattleBehavior:ForEachMonster(func)
@@ -62,6 +102,7 @@ function BattleBehavior:ForEach(func)
         func:Execute(self.bornAreas[i])
     end
 end
+
 
 function BattleBehavior:Dispose()
     BattleBehavior.super.Dispose(self)
