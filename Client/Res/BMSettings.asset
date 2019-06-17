@@ -12,22 +12,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d268296124e6984692a713e72add158, type: 3}
   m_Name: BMSettings
   m_EditorClassIdentifier: 
+  resRootDir: Assets/Res/
+  zipLevel: 9
+  luaFolderList:
+  - Assets/Lua
+  luaBuildType: 4
+  luaCompressType: 2
+  luaPattern: '*.lua'
   scenesFolderList:
   - Assets/Res/Scenes
-  scenesCompressType: 1
-  bundleFolderList:
+  scenesBuildType: 1
+  scenesCompressType: 2
+  scenesPattern: '*.unity'
+  singleFolderList:
+  - Assets/Res/Textures
+  singleBuildType: 0
+  singleCompressType: 2
+  singlePattern: '*.*'
+  packFolderList:
   - Assets/Res/Atlas
   - Assets/Res/Sprites/Atlas
-  - Assets/Res/Sprites/Prefabs
-  - Assets/Res/Prefabs
-  - Assets/Res/Effects
-  - Assets/Res/Materias
-  - Assets/Res/Models
-  bundleCompressType: 2
-  wholeFolderList:
+  packBuildType: 2
+  packCompressType: 2
+  packPattern: '*.*'
+  shaderFolderList:
   - Assets/Res/Shaders
-  wholeCompressType: 1
-  Suffix_Bundle: .bundle
+  shaderBuildType: 3
+  shaderCompressType: 1
+  shaderPattern: '*.*'
+  Suffix_Bundle: bundle
   Scene_Suffix: '*.unity'
-  Ignore_Suffix: .meta,.DS_Store
-  Ignore_Folder: .svn
+  Ignore_Suffix: .meta,.DS_Store,.iml
+  Ignore_Folder: .svn,.idea
+  ownerDependenceSuffixs:
+  - .prefab
+  - .mat
+  - .controller
