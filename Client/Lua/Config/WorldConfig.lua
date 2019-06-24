@@ -49,6 +49,7 @@ WorldConfig.Battle = {
     level = "Battle",
     sceneName = "Battle",
     levelUrl = "Scenes/Battle.unity",
+    needLoading = true,
     subLevels = {
       [1] =
       {

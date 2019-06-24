@@ -21,7 +21,7 @@ function WorldMdr:Ctor()
 end
 
 function WorldMdr:OnInit()
-    World.EnterScene(WorldConfig.Login)
+    self:EnterScene(WorldConfig.Login)
 end
 
 function WorldMdr:GetTempLevel()
@@ -47,8 +47,12 @@ function WorldMdr:EnterScene(sceneInfo, callback)
         elseif sceneInfo.needLoading then
             self.nextScene = sceneInfo
             self:EnterScene(WorldConfig.Loading)
+        elseif sceneInfo == WorldConfig.Loading then
+            self:LoadLevel(sceneInfo.level, sceneInfo, callback)
         else
-            self:LoadLevel(sceneInfo.level,sceneInfo, callback)
+            self:LoadScene(sceneInfo, function()
+                self:LoadLevel(sceneInfo.level, sceneInfo, callback)
+            end)
         end
     end
 end
@@ -58,6 +62,15 @@ function WorldMdr:EnterNextScene()
     self:EnterScene(self.nextScene,function ()
         self.nextScene.needLoading = true
         self.nextScene = nil
+    end)
+end
+
+---@param sceneInfo SceneInfo
+function WorldMdr:LoadScene(sceneInfo, callback)
+    Res.LoadObjectAsync(sceneInfo.levelUrl, function()
+        if callback ~= nil then
+            callback()
+        end
     end)
 end
 
