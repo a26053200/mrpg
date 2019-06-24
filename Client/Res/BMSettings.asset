@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d268296124e6984692a713e72add158, type: 3}
   m_Name: BMSettings
   m_EditorClassIdentifier: 
-  resRootDir: Assets/Res/
+  resDir: Assets/Res/
+  lastBuildDate: 
   zipLevel: 9
   luaFolderList:
   - Assets/Lua
+  - Assets/Framework/ToLua/Lua
   luaBuildType: 4
-  luaCompressType: 2
+  luaCompressType: 1
   luaPattern: '*.lua'
   scenesFolderList:
   - Assets/Res/Scenes
@@ -26,6 +28,9 @@ MonoBehaviour:
   scenesPattern: '*.unity'
   singleFolderList:
   - Assets/Res/Textures
+  - Assets/Res/Models
+  - Assets/Res/Materials
+  - Assets/Res/Prefabs
   singleBuildType: 0
   singleCompressType: 2
   singlePattern: '*.*'
