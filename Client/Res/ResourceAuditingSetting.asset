@@ -38,3 +38,17 @@ MonoBehaviour:
   Model_FileTypes:
   - .fbx
   - .obj
+  autioLengthThreshold: 5
+  audioClipLoadType_Short_Ios: 0
+  compressionFormat_Short_Ios: 3
+  audioClipLoadType_Long_Ios: 0
+  compressionFormat_Long_Ios: 3
+  audioClipLoadType_Short_Android: 2
+  compressionFormat_Short_Android: 1
+  audioClipLoadType_Long_Android: 2
+  compressionFormat_Long_Android: 1
+  Sound_FileTypes:
+  - .aif
+  - .wav
+  - .mp3
+  - .ogg

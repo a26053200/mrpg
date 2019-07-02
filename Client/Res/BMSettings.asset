@@ -31,6 +31,7 @@ MonoBehaviour:
   - Assets/Res/Models
   - Assets/Res/Materials
   - Assets/Res/Prefabs
+  - Assets/Res/Sounds
   singleBuildType: 0
   singleCompressType: 2
   singlePattern: '*.*'
