@@ -56,4 +56,4 @@ MonoBehaviour:
   - .controller
   atlasSpriteFolderList:
   - Assets/Res/Atlas/HeadIcon
-  atlasSpritePrefabDir: Assets/Res/Prefabs/
+  atlasSpritePrefabDir: Assets/Res/Prefabs/AtlasSprite/
