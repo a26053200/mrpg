@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7829370850289278817}
   - component: {fileID: 1432473774170123602}
   - component: {fileID: 834424324857106372}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: org_ps0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b476184b345e5f4094140fade9a96fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  texture: {fileID: 2800000, guid: 70bbd0ead6e6fde4ea54279f5156cd89, type: 3}
   SpriteFrames:
   - {fileID: 21300000, guid: 70bbd0ead6e6fde4ea54279f5156cd89, type: 3}
   - {fileID: 21300002, guid: 70bbd0ead6e6fde4ea54279f5156cd89, type: 3}
@@ -153,7 +152,6 @@ MonoBehaviour:
   - {fileID: 21300122, guid: 70bbd0ead6e6fde4ea54279f5156cd89, type: 3}
   - {fileID: 21300124, guid: 70bbd0ead6e6fde4ea54279f5156cd89, type: 3}
   - {fileID: 21300126, guid: 70bbd0ead6e6fde4ea54279f5156cd89, type: 3}
-  - {fileID: 0}
   FPS: 15
   IsPlaying: 0
   Foward: 1
