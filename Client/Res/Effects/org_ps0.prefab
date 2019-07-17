@@ -4639,7 +4639,7 @@ ParticleSystem:
 --- !u!199 &2244848310077467252
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4654,8 +4654,8 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b1f4a463fcc92bd42ac6d86f6c5b2ef6, type: 2}
-  - {fileID: 2100000, guid: b1f4a463fcc92bd42ac6d86f6c5b2ef6, type: 2}
+  - {fileID: 2100000, guid: 53a21f6ef0fe0444080a19f1b607d341, type: 2}
+  - {fileID: 2100000, guid: 53a21f6ef0fe0444080a19f1b607d341, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9397,7 +9397,7 @@ ParticleSystem:
 --- !u!199 &6839708633255396294
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9412,8 +9412,8 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b1f4a463fcc92bd42ac6d86f6c5b2ef6, type: 2}
-  - {fileID: 2100000, guid: b1f4a463fcc92bd42ac6d86f6c5b2ef6, type: 2}
+  - {fileID: 2100000, guid: 53a21f6ef0fe0444080a19f1b607d341, type: 2}
+  - {fileID: 2100000, guid: 53a21f6ef0fe0444080a19f1b607d341, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9472,8 +9472,8 @@ MonoBehaviour:
   imageFormat: 0
   MaxSize: 2048
   resolution: {x: 2048, y: 2048}
-  cutSize: {x: 300, y: 300}
+  cutSize: {x: 256, y: 256}
   FPS: 60
-  frameCount: 32
-  recordScale: 1
+  frameCount: 64
+  recordScale: 0.8
   exportPath: Assets/Res/Effects/SpriteFrames/org_ps0/
