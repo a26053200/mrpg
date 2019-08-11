@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d268296124e6984692a713e72add158, type: 3}
   m_Name: BMSettings
   m_EditorClassIdentifier: 
+  AppName: AppName
+  BuildOutoutDirName: AssetBundle
   resDir: Assets/Res/
   lastBuildDate: 
   zipLevel: 9
@@ -28,10 +30,7 @@ MonoBehaviour:
   scenesPattern: '*.unity'
   singleFolderList:
   - Assets/Res/Textures
-  - Assets/Res/Models
-  - Assets/Res/Materials
   - Assets/Res/Prefabs
-  - Assets/Res/Sounds
   singleBuildType: 0
   singleCompressType: 2
   singlePattern: '*.*'
